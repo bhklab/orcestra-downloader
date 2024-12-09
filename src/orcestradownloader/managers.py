@@ -1,3 +1,4 @@
+from __future__ import annotations
 import click
 import difflib
 import aiohttp
@@ -11,9 +12,12 @@ from pathlib import Path
 import json
 from .models.pset import PharmacoSet
 from datetime import datetime
+from rich.table import Table
+from rich.console import Console
+
 # Setup logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.WARNING,
     format="%(message)s",
     datefmt="[%X]",
     handlers=[RichHandler(rich_tracebacks=True, tracebacks_show_locals=True)],
@@ -69,10 +73,13 @@ class PharmacoSetManager:
     psets: List[PharmacoSet] = field(default_factory=list)
     url: str = "https://orcestra.ca/api/psets/available"
 
-    def __init__(self, force: bool = False) -> None:
-        result = asyncio.run(self.fetch(force=force))
-        if result and not isinstance(result, Exception):
-            log.info(f"Successfully fetched {len(self.psets)} PharmacoSets.")
+    def __init__(self, force: bool = False, psets: Optional[List[PharmacoSet]] = None) -> None:
+        if psets is not None:
+            self.psets = psets
+        else:
+            result = asyncio.run(self.fetch(force=force))
+            if result and not isinstance(result, Exception):
+                log.info(f"Successfully fetched {len(self.psets)} PharmacoSets.")
 
     async def fetch(self, force: bool = False) -> None:
         """Fetch and initialize PharmacoSets from the API."""
@@ -109,33 +116,91 @@ class PharmacoSetManager:
         try:
             return next(pset for pset in self.psets if pset.name == name)
         except StopIteration:
-            closest_matches = self.find_similar(name)
-            if closest_matches:
-                suggestion_msg = f"PharmacoSet '{name}' not found"
-                suggestion_msg += f"\nFound similar:\n\t{',\n\t'.join(closest_matches)}"
-                raise ValueError(suggestion_msg)
-            else:
-                log.error("PharmacoSet '%s' not found and no similar names found.", name)
-                raise ValueError(f"PharmacoSet '{name}' not found and no similar names found.")
+            try: 
+                all = [pset for pset in self.psets if pset.dataset.name == name] 
+                if len(all) == 1:
+                    return all[0]
+                else:
+                    log.warning(f"{len(all)} PharmacoSets found with name '{name}'. Returning first match.")
+                    return all[0]
+
+            except StopIteration:
+                closest_matches = self.find_similar(name)
+                if closest_matches:
+                    suggestion_msg = f"PharmacoSet '{name}' not found"
+                    suggestion_msg += f"\nFound similar:\n\t{',\n\t'.join(closest_matches)}"
+                    raise ValueError(suggestion_msg)
+                else:
+                    log.error("PharmacoSet '%s' not found and no similar names found.", name)
+                    raise ValueError(f"PharmacoSet '{name}' not found and no similar names found.")
 
     def find_similar(self, name: str, n: int = 3, cutoff: float = 0.3) -> List[str]:
         """Find similar PharmacoSet names."""
         log.debug("Finding similar names for: %s", name)
         return difflib.get_close_matches(name, self.names, n=n, cutoff=cutoff)
 
+    def filter(self, **kwargs: Any) -> PharmacoSetManager: # type: ignore # noqa
+        """Filter PharmacoSets based on attributes."""
+        filtered_psets = [pset for pset in self.psets if all(getattr(pset, k) == v for k, v in kwargs.items())]
+        if filtered_psets:
+            return PharmacoSetManager(psets=filtered_psets)
+        
+        filtered_psets = [pset for pset in self.psets if any(getattr(pset.dataset, k) == v for k, v in kwargs.items())]
+        if filtered_psets:
+            return PharmacoSetManager(psets=filtered_psets)
+
+        raise ValueError(f"No PharmacoSets found with attributes: {kwargs}")
+
+    def print_table(self, sort: bool = True) -> None:
+        """Print a table of PharmacoSets sorted by name."""
+        if sort:
+            sorted_psets = sorted(self.psets, key=lambda pset: pset.name.lower())
+        else:
+            sorted_psets = self.psets
+        table = Table(title="PharmacoSets")
+
+        table.add_column("PharmacoSet Name", justify="left", style="cyan", no_wrap=True)
+        table.add_column("Dataset Name", justify="left", style="magenta")
+        table.add_column("DOI", justify="left", style="yellow")
+        table.add_column("Date Created", justify="left", style="green")
+        table.add_column("Available Datatypes", justify="left", style="blue")
+
+        for pset in sorted_psets:
+            table.add_row(
+                pset.name, 
+                pset.dataset.name, 
+                pset.doi, 
+                pset.date_created.strftime("%Y-%m-%d") if pset.date_created else "N/A",
+                ", ".join(pset.datatypes) if pset.datatypes else "N/A"
+            )
+
+        console = Console()
+        console.print(table)
+
 @click.command()
 @click.option("--force", is_flag=True, help="Force fetch new PharmacoSets")
-def cli(force: bool = False) -> None:
+@click.argument(
+	'names',
+	nargs=-1,  # Allow multiple search inputs
+	type=str,
+	required=False,
+)
+def cli(names: List[str], force: bool = False, ) -> None:
     """Fetch PharmacoSets from the API."""
     log.info("Starting application...")
+    if names:
+        log.info("Searching for PharmacoSets with names: %s", names)
+
     psm = PharmacoSetManager(force=force)
-    # try:
-    #     print(psm["GDSC"])
-    # except ValueError as e:
-    #     log.error("Error: %s", e)
-    print(psm["FIMM_2016"])
-    log.info("Application finished.")
+
+    if not names:
+        psm.print_table()
+        return
+
+    for name in names:
+        filtered = psm.filter(name=name)
+        filtered.psets = sorted(filtered.psets, key=lambda pset: pset.date_created or datetime.min, reverse=True)
+        filtered.print_table(sort=False)
 
 if __name__ == "__main__":
-    from rich import print
     cli()

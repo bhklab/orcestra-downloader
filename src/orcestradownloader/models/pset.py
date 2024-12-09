@@ -3,7 +3,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional, List
 from datetime import datetime
-
+from rich.table import Table
+from rich.console import Console
 
 from rich.logging import RichHandler
 
@@ -134,3 +135,27 @@ class PharmacoSet:
                 for adt in data["availableDatatypes"]
             ]
         )
+
+    @property
+    def datatypes(self) -> List[str]:
+        return [adt.name for adt in self.available_datatypes]
+
+    def print_table(self) -> None:
+        """Print a table of the PharmacoSet."""
+        table = Table(title="PharmacoSet Summary")
+
+        table.add_column("Field", style="bold cyan", no_wrap=True)
+        table.add_column("Value", style="magenta")
+
+        table.add_row("Name", self.name)
+        table.add_row("Dataset Name", self.dataset.name)
+        table.add_row("DOI", self.doi)
+        table.add_row("Date Created", self.date_created.isoformat() if self.date_created else "N/A")
+        table.add_row("Download Link", self.download_link)
+        table.add_row("Dataset Sensitivity Version", self.dataset.sensitivity.version)
+        table.add_row("Dataset Sensitivity Source", self.dataset.sensitivity.source)
+        table.add_row("Available Datatypes", ", ".join(self.datatypes) if self.datatypes else "N/A")
+
+        console = Console()
+        console.print(table)
+
