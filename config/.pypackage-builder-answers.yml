@@ -1,11 +1,11 @@
 # Changes here will be overwritten by Copier
 _commit: v0.6.0
-_src_path: git@github.com:jjjermiah/PyPackageBuilder.git
+_src_path: git@github.com:bhklab/PyPackageBuilder.git
 author_email: jermiahjoseph98@gmail.com
 author_full_name: Jermiah Joseph
 build_backend: hatch
 git_init: true
-github_username: jjjermiah
+github_username: bhklab
 package_description: Simplified access to download data from orcestra.ca
 package_name: orcestra-downloader
 pixi_install: true
