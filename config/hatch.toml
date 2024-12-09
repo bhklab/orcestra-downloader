@@ -1,0 +1,31 @@
+[version]
+# Path to file containing version string
+# https://hatch.pypa.io/latest/version/#sources
+path = "src/orcestradownloader/__init__.py"
+
+[build]
+# Output directory for built distributions
+# https://hatch.pypa.io/latest/config/build/#output-directory
+directory = "dist"
+
+# Include package data files
+# https://hatch.pypa.io/latest/config/build/#include-package-data
+include-package-data = true
+
+# Generate reproducible builds
+# https://hatch.pypa.io/latest/config/build/#reproducible
+reproducible = false
+
+[build.targets.wheel]
+# A Wheel is a built distribution format
+# https://packaging.python.org/en/latest/specifications/binary-distribution-format/
+# https://hatch.pypa.io/latest/plugins/builder/wheel/ 
+
+packages = ["src/orcestradownloader"]
+
+[build.targets.sdist]
+# A Source Distribution (or "sdist") is a built distribution format
+# https://packaging.python.org/en/latest/specifications/source-distribution-format/
+# https://hatch.pypa.io/latest/plugins/builder/sdist/
+
+include = ["src/orcestradownloader"]

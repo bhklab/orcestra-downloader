@@ -1,0 +1,17 @@
+# Changes here will be overwritten by Copier
+_commit: v0.6.0
+_src_path: git@github.com:jjjermiah/PyPackageBuilder.git
+author_email: jermiahjoseph98@gmail.com
+author_full_name: Jermiah Joseph
+build_backend: hatch
+git_init: true
+github_username: jjjermiah
+package_description: Simplified access to download data from orcestra.ca
+package_name: orcestradownloader
+pixi_install: true
+pixi_install_envs:
+- dev
+project_name: OrcestraDownloader
+project_slug: orcestradownloader
+python_version: '3.12'
+software_license: MIT License

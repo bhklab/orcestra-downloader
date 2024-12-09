@@ -1,0 +1,42 @@
+#--------------------------------------------------------------------------------------------------#
+######################################### Package Config ###########################################
+#__________________________________________________________________________________________________#
+[project]
+name = "orcestradownloader"
+version = "0.1.0"
+description = "Simplified access to download data from orcestra.ca"
+license = "MIT"
+
+readme = "README.md"
+keywords = ["orcestradownloader", "pixi", "python"]
+
+authors = [{ name = "Jermiah Joseph", email = "jermiahjoseph98@gmail.com" }]
+maintainers = [{ name = "Jermiah Joseph", email = "jermiahjoseph98@gmail.com" }]
+
+classifiers = [
+  "Development Status :: 1 - Planning",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Operating System :: OS Independent",
+  "License :: OSI Approved :: MIT License",
+]
+
+requires-python = ">= 3.12"
+dependencies = [
+  "rich",
+]
+
+[project.urls]
+homepage = "https://github.com/jjjermiah/orcestradownloader"
+repository = "https://github.com/jjjermiah/orcestradownloader"
+documentation = "https://jjjermiah.github.io/orcestradownloader/"
+changelog = "https://github.com/jjjermiah/orcestradownloader/blob/main/docs/CHANGELOG.md"
+issues = "https://github.com/jjjermiah/orcestradownloader/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+myscript = "orcestradownloader.main:main"

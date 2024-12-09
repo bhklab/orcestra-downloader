@@ -1,0 +1,129 @@
+#--------------------------------------------------------------------------------------------------#
+############################################## PIXI ################################################
+#__________________________________________________________________________________________________#
+[project]
+name = "orcestradownloader"
+channels = ["conda-forge"]
+platforms = ["osx-arm64", "linux-64", "win-64", "osx-64"]
+
+[environments]
+dev = { features = ["dev", "test", "quality", "docs"], solve-group = "default" }
+quality = { features = ["quality"], solve-group = "default" }
+docs = { features = ["docs"], solve-group = "default" }
+publish = { features = ["build", "release"], solve-group = "default" }
+py312 = { features = ["test", "py312"] }
+py313 = { features = ["test", "py313"] }
+
+
+############################################# DEFAULT #############################################
+[pypi-dependencies]
+orcestradownloader = { path = ".", editable = true }
+
+[dependencies]
+python = ">=3.12"
+
+####################################### PYTHON VERSIONS ###########################################
+[feature.py312.dependencies]
+python = "3.12.*"
+[feature.py313.dependencies]
+python = "3.13.*"
+
+
+############################################# DEV ################################################## 
+[feature.dev.dependencies]
+ipython = "*"
+ipykernel = "*"
+jupyterlab = "*"
+pip = "*"
+
+
+############################################## TEST ################################################
+[feature.test.dependencies]
+pytest = "*"
+pytest-cov = "*"
+pytest-xdist = "*"
+
+[feature.test.tasks.test]
+cmd = "pytest -c config/pytest.ini"
+inputs = ["src", "tests", "config/pytest.ini", "config/coverage.toml"]
+outputs = ["coverage-report/coverage.xml"]
+description = "Run pytest"
+
+[feature.test.tasks.coverage]
+cmd = "coverage report --rcfile=config/coverage.toml"
+inputs = ["src", "tests", "coverage-report/coverage.xml"]
+description = "Generate generated coverage report"
+depends-on = ["test"]
+
+############################################## QUALITY ###############################################
+# Quality includes linting, type checking, and formatting
+[feature.quality.dependencies]
+ruff = ">=0.4.4"
+mypy = ">=1.13.0,<2"
+
+[feature.quality.pypi-dependencies]
+pydoctest = ">=0.2.1, <0.3"
+
+[feature.quality.tasks]
+ruff-check.cmd = ["ruff", "--config", "config/ruff.toml", "check", "src"]
+ruff-check.inputs = ["config/ruff.toml", "src"]
+ruff-check.description = "Run ruff check"
+
+ruff-format.cmd = ["ruff", "--config", "config/ruff.toml", "format", "src"]
+ruff-format.inputs = ["config/ruff.toml", "src"]
+ruff-format.depends_on = ["ruff-check"]
+ruff-format.description = "Run ruff format, run check first"
+
+type-check.cmd = ["mypy", "--config-file", "config/mypy.ini"]
+type-check.inputs = ["config/mypy.ini", "src"]
+type-check.description = "Run mypy type check."
+
+qc.depends_on = ["ruff-format", "ruff-check", "type-check"]
+qc.description = "Quality check: ruff & mypy"
+
+############################################## DOCS ################################################
+# Available tasks: doc-build, doc-serve, doc-deploy
+
+[feature.docs.dependencies]
+mkdocs = "*"
+
+[feature.docs.tasks.doc-build]
+cmd = "mkdocs build -f mkdocs.yaml"
+inputs = ["docs"]
+outputs = ["site"]
+
+[feature.docs.tasks.doc-serve]
+cmd = "mkdocs serve -f mkdocs.yaml"
+inputs = ["docs"]
+
+[feature.docs.tasks.doc-deploy]
+cmd = "mkdocs gh-deploy -f mkdocs.yaml --force"
+inputs = ["docs"]
+
+#################################### RELEASE & BUILD ###############################################
+[feature.release.dependencies]
+python-semantic-release = ">=8.5.1"
+
+[feature.release.tasks]
+semver = 'echo "Next Version is: $(semantic-release version --print)"'
+
+[feature.build.dependencies]
+hatch = "*"
+
+[feature.build.tasks]
+# Builds the package and publishes it to the test.pypi.org repository
+build = { cmd = "hatch build --clean", inputs = ["src"], outputs = ["dist/*"] }
+
+publish-pypi = { cmd = "hatch publish --yes --repo main", inputs = [
+  "dist/*",
+  "hatch.toml",
+], depends-on = [
+  "build",
+] }
+
+publish-test = { cmd = "hatch publish --yes --repo test", inputs = [
+  "dist/*",
+  "hatch.toml",
+], depends-on = [
+  "build",
+] }
