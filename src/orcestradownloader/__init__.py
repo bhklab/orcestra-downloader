@@ -1,9 +1,9 @@
 """This is a docstring for the public package."""
+from orcestradownloader.main import main
 
 version = "0.1.0"
 
 __version__ = version
 
-from orcestradownloader.main import main
 
 __all__ = ["main"]

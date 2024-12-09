@@ -1,7 +1,7 @@
 [tool.coverage.run]
 # Specify the source code directories to measure
 # Ensures coverage only tracks relevant package code
-source = ["orcestradownloader"]
+source = ["orcestra-downloader"]
 
 # Omit specific files or directories from coverage
 # Excludes non-relevant files from coverage reporting

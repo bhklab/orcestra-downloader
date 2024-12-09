@@ -7,11 +7,11 @@ build_backend: hatch
 git_init: true
 github_username: jjjermiah
 package_description: Simplified access to download data from orcestra.ca
-package_name: orcestradownloader
+package_name: orcestra-downloader
 pixi_install: true
 pixi_install_envs:
 - dev
-project_name: OrcestraDownloader
-project_slug: orcestradownloader
+project_name: orcestra-downloader
+project_slug: orcestra-downloader
 python_version: '3.12'
 software_license: MIT License

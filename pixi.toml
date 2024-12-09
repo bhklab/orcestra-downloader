@@ -2,7 +2,7 @@
 ############################################## PIXI ################################################
 #__________________________________________________________________________________________________#
 [project]
-name = "orcestradownloader"
+name = "orcestra-downloader"
 channels = ["conda-forge"]
 platforms = ["osx-arm64", "linux-64", "win-64", "osx-64"]
 
@@ -17,7 +17,7 @@ py313 = { features = ["test", "py313"] }
 
 ############################################# DEFAULT #############################################
 [pypi-dependencies]
-orcestradownloader = { path = ".", editable = true }
+orcestra-downloader = { path = ".", editable = true }
 
 [dependencies]
 python = ">=3.12"
@@ -117,14 +117,12 @@ build = { cmd = "hatch build --clean", inputs = ["src"], outputs = ["dist/*"] }
 
 publish-pypi = { cmd = "hatch publish --yes --repo main", inputs = [
   "dist/*",
-  "hatch.toml",
 ], depends-on = [
   "build",
 ] }
 
 publish-test = { cmd = "hatch publish --yes --repo test", inputs = [
   "dist/*",
-  "hatch.toml",
 ], depends-on = [
   "build",
 ] }

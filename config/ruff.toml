@@ -86,7 +86,7 @@ ignore = [
 # https://docs.astral.sh/ruff/settings/#isort
 [lint.isort]
 # Define project-specific imports for better organization
-known-first-party = ["orcestradownloader"]
+known-first-party = ["orcestra-downloader"]
 
 # https://docs.astral.sh/ruff/settings/#pydocstyle
 [lint.pydocstyle]

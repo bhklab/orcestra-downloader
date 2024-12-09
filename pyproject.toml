@@ -2,13 +2,13 @@
 ######################################### Package Config ###########################################
 #__________________________________________________________________________________________________#
 [project]
-name = "orcestradownloader"
+name = "orcestra-downloader"
 version = "0.1.0"
 description = "Simplified access to download data from orcestra.ca"
 license = "MIT"
 
 readme = "README.md"
-keywords = ["orcestradownloader", "pixi", "python"]
+keywords = ["orcestra-downloader", "pixi", "python"]
 
 authors = [{ name = "Jermiah Joseph", email = "jermiahjoseph98@gmail.com" }]
 maintainers = [{ name = "Jermiah Joseph", email = "jermiahjoseph98@gmail.com" }]
@@ -30,15 +30,48 @@ dependencies = [
 ]
 
 [project.urls]
-homepage = "https://github.com/jjjermiah/orcestradownloader"
-repository = "https://github.com/jjjermiah/orcestradownloader"
-documentation = "https://jjjermiah.github.io/orcestradownloader/"
-changelog = "https://github.com/jjjermiah/orcestradownloader/blob/main/docs/CHANGELOG.md"
-issues = "https://github.com/jjjermiah/orcestradownloader/issues"
+homepage = "https://github.com/jjjermiah/orcestra-downloader"
+repository = "https://github.com/jjjermiah/orcestra-downloader"
+documentation = "https://jjjermiah.github.io/orcestra-downloader/"
+changelog = "https://github.com/jjjermiah/orcestra-downloader/blob/main/docs/CHANGELOG.md"
+issues = "https://github.com/jjjermiah/orcestra-downloader/issues"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project.scripts]
-myscript = "orcestradownloader.main:main"
+myscript = "orcestra-downloader.main:main"
+
+
+[tool.hatch.version]
+# Path to file containing version string
+# https://hatch.pypa.io/latest/version/#sources
+path = "src/orcestradownloader/__init__.py"
+
+[tool.hatch.build]
+# Output directory for built distributions
+# https://hatch.pypa.io/latest/config/build/#output-directory
+directory = "dist"
+
+# Include package data files
+# https://hatch.pypa.io/latest/config/build/#include-package-data
+include-package-data = true
+
+# Generate reproducible builds
+# https://hatch.pypa.io/latest/config/build/#reproducible
+reproducible = false
+
+[tool.hatch.build.targets.wheel]
+# A Wheel is a built distribution format
+# https://packaging.python.org/en/latest/specifications/binary-distribution-format/
+# https://hatch.pypa.io/latest/plugins/builder/wheel/ 
+
+packages = ["src/orcestradownloader"]
+
+[tool.hatch.build.targets.sdist]
+# A Source Distribution (or "sdist") is a built distribution format
+# https://packaging.python.org/en/latest/specifications/source-distribution-format/
+# https://hatch.pypa.io/latest/plugins/builder/sdist/
+
+include = ["src/orcestradownloader"]
