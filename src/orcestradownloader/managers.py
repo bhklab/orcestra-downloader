@@ -198,9 +198,19 @@ def cli(names: List[str], force: bool = False, ) -> None:
         return
 
     for name in names:
-        filtered = psm.filter(name=name)
-        filtered.psets = sorted(filtered.psets, key=lambda pset: pset.date_created or datetime.min, reverse=True)
-        filtered.print_table(sort=False)
+        try:
+            filtered = psm.filter(name=name)
+            filtered.psets = sorted(filtered.psets, key=lambda pset: pset.date_created or datetime.min, reverse=True)
+            filtered.print_table(sort=False)
+        except ValueError as e:
+            similar = psm.find_similar(name)
+            if similar:
+                # log.error("Error: %s", e)
+                # log.info("Found similar PharmacoSets: %s", similar)
+                msg = f"Error: {e}\nFound similar PharmacoSets:\n\t{', '.join(similar)}"
+                log.error(msg)
+            else:
+                log.exception("Error: %s", e)
 
 if __name__ == "__main__":
     cli()
