@@ -87,6 +87,7 @@ qc.description = "Quality check: ruff & mypy"
 
 [feature.docs.dependencies]
 mkdocs = "*"
+mike = "*"
 
 [feature.docs.tasks.doc-build]
 cmd = "mkdocs build -f mkdocs.yaml"

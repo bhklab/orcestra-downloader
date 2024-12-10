@@ -68,9 +68,9 @@ jobs:
           name: codecov-umbrella
 
   ################################################################################################
-  # Ruff: Run ruff linter
+  # Quality-Control: Run ruff linter
   ################################################################################################
-  Ruff:
+  Quality-Control:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -87,7 +87,7 @@ jobs:
           cache: true
           locked: false
 
-      - name: Run Ruff
+      - name: Run Quality-Control (ruff and mypy)
         run: pixi run -e ${{ matrix.env }} qc
 
   ################################################################################################
@@ -169,7 +169,7 @@ jobs:
       issues: write
       pull-requests: write
 
-    needs: [Unit-Tests, Ruff]
+    needs: [Unit-Tests, Quality-Control, Build-Docs]
 
     # if pulling to main, deploy to PyPI
     if: github.ref == 'refs/heads/main'
