@@ -1,7 +1,23 @@
 # CHANGELOG
 
 
+## v0.6.0 (2024-12-10)
+
+### Features
+
+- Enhance CLI help formatting for dataset commands
+  ([`83e68be`](https://github.com/bhklab/orcestra-downloader/commit/83e68be43575e8bf501849f5c150b94391c8805c))
+
+- Enhance dataset download functionality with support for multiple datasets and default directory
+  ([`48ae456`](https://github.com/bhklab/orcestra-downloader/commit/48ae456ce42b9066e67d0df4a9ce696ab255fb49))
+
+
 ## v0.5.0 (2024-12-10)
+
+### Chores
+
+- **sem-ver**: 0.5.0
+  ([`1b5a11b`](https://github.com/bhklab/orcestra-downloader/commit/1b5a11bf8f8223bf8942697d7cde427a6baa5b4a))
 
 ### Features
 
