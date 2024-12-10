@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.3.0 (2024-12-10)
+
+### Features
+
+- Scaffold download entry point
+  ([`1a0b295`](https://github.com/bhklab/orcestra-downloader/commit/1a0b295515d08349e78f2331bd06ca16676d4e77))
+
+
 ## v0.2.1 (2024-12-10)
 
 ### Bug Fixes
@@ -8,6 +16,11 @@
 - Update CI workflow to use matrix for Python version and environment variable in Publish-To-PyPi
   job
   ([`593cb33`](https://github.com/bhklab/orcestra-downloader/commit/593cb3339b9617e36dd2b3198b82f0035c4c9f55))
+
+### Chores
+
+- **sem-ver**: 0.2.1
+  ([`b2a0ef1`](https://github.com/bhklab/orcestra-downloader/commit/b2a0ef1d1b0f095baffa2e81a11a235c117f4125))
 
 
 ## v0.2.0 (2024-12-10)
