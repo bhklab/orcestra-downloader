@@ -11,6 +11,8 @@ from orcestradownloader.logging_config import set_log_verbosity
 from orcestradownloader.managers import REGISTRY, DatasetManager, UnifiedDataManager
 from orcestradownloader.models import ICBSet, PharmacoSet, RadioSet, ToxicoSet, XevaSet, RadiomicSet
 
+DEFAULT_DATA_DIR = Path.cwd() / 'rawdata' / 'orcestradata'
+
 @dataclass
 class DatasetConfig:
 	url: str
@@ -108,8 +110,19 @@ class DatasetMultiCommand(MultiCommand):
 
 			@ds_group.command(name='download')
 			@click.option('--overwrite', '-o', is_flag=True, help='Overwrite existing file, if it exists.', default=False, show_default=True)
-			@click.option('--filename', '-f', help='Filename to save the file as. Defaults to the name of the dataset', default=None, type=str, required=False)
-			@click.option('--directory', '-d', help='Directory to save the file to', default=Path.cwd(), type=click.Path(exists=True, file_okay=False, dir_okay=True, writable=True, path_type=Path), required=True)
+			@click.option(
+				'--directory', 
+				'-d', 
+				help=f'Directory to save the file to. Defaults to ./{DEFAULT_DATA_DIR.relative_to(Path.cwd())}',
+				default=DEFAULT_DATA_DIR,
+				type=click.Path(
+					exists=False, 
+					file_okay=False, 
+					dir_okay=True, 
+					writable=True, 
+					path_type=Path
+				), 
+			)
 			@click.argument(
 				'ds_name',
 				type=str,
@@ -123,18 +136,17 @@ class DatasetMultiCommand(MultiCommand):
 			def _download(
 				ctx, 
 				ds_name: List[str],
-				directory: Path,  
+				directory: Path,
 				force: bool = False, 
 				verbose: int = 1, 
 				quiet: bool = False, 
-				filename: str | None = None, 
 				overwrite: bool = False
 			):
 				"""Download a file for this dataset."""
-				click.echo(f'Downloading {name} to {directory}')
 				manager = UnifiedDataManager(force=force)
-				file_path = manager.download_one(name, ds_name, directory, overwrite, force)
-				click.echo(f'Downloaded {file_path}')
+				file_paths = manager.download_by_name(name, ds_name, directory, overwrite, force)
+				for file_path in file_paths:
+					click.echo(f'Downloaded {file_path}')
 			return ds_group
 		return None
 

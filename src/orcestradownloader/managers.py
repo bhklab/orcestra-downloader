@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -262,13 +263,14 @@ class UnifiedDataManager:
 				for ds_name in ds_names:
 					click.echo(f'{name},{ds_name}')
 
-	def download_one(self, 
-									 manager_name: str, 
-									 ds_name: List[str],
-									 directory: Path, 
-									 overwrite: bool = False, 
-									 force: bool = False
-	) -> Path:
+	def download_by_name(
+		self, 
+		manager_name: str, 
+		ds_name: List[str],
+		directory: Path, 
+		overwrite: bool = False, 
+		force: bool = False
+	) -> List[Path]:
 		"""Download a single dataset."""
 		# Fetch data asynchronously
 		try:
@@ -281,13 +283,26 @@ class UnifiedDataManager:
 		manager = self.registry.get_manager(manager_name)
 		dataset_list = [manager[ds_name] for ds_name in ds_name]
 
+		file_paths = {}
 		for ds in dataset_list:
 			if not ds.download_link:
 				msg = f'Dataset {ds.name} does not have a download link.'
 				raise ValueError(msg)
-			
 			file_path = directory / f'{ds.name}.zip'
-		return file_path
+			if file_path.exists() and not overwrite:
+				Console().print(f'[bold red]File {file_path} already exists. Use --overwrite to overwrite.[/]')
+				sys.exit(1)
+			file_path.parent.mkdir(parents=True, exist_ok=True)
+			file_paths[ds.name] = file_path
+		
+		async def download_all(progress: Progress) -> List[Path]:
+			return await asyncio.gather(*[
+				download_dataset(ds.download_link, file_paths[ds.name], progress) 
+				for ds in dataset_list
+			])
+		
+		with Progress() as progress:
+			return asyncio.run(download_all(progress))
 
 	def names(self) -> List[str]:
 		"""List all managers."""
@@ -301,3 +316,20 @@ class UnifiedDataManager:
 			msg = f'Manager {name} not found in {self.__class__.__name__}.'
 			msg += f' Available managers: {", ".join(self.names())}'
 			raise ValueError(msg) from se
+
+async def download_dataset(download_link: str, file_path: Path, progress: Progress) -> Path:
+	"""Download a single dataset.
+
+	Called by the UnifiedDataManager.download_by_name method
+	"""
+	async with aiohttp.ClientSession() as session: # noqa: SIM117
+		async with session.get(download_link) as response:
+			total = int(response.headers.get('content-length', 0))
+			task = progress.add_task(f"[cyan]Downloading {file_path.name}...", total=total)
+			with file_path.open('wb') as f:
+				async for chunk in response.content.iter_chunked(8192):
+					f.write(chunk)
+					progress.update(task, advance=len(chunk))
+	return file_path
+
+
