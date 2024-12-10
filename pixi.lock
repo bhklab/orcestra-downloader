@@ -5289,8 +5289,8 @@ packages:
   timestamp: 1731379715927
 - pypi: .
   name: orcestra-downloader
-  version: 0.2.0
-  sha256: 91148556b3ae9638560071b4fe5a5a62cad580aae78ce2339254fb1114ad0783
+  version: 0.2.1
+  sha256: 22d5c601ce388e7f6bdabc68cd6d8ce34b99765371270ae354839418e49fe997
   requires_dist:
   - rich
   - aiohttp>=3.11.4

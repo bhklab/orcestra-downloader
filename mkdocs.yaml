@@ -1,4 +1,4 @@
-site_name: My Docs
+site_name: Orcestra Downloader
 repo_url: https://github.com/bhklab/orcestra-downloader
 repo_name: orcestra-downloader
 site_description: Package documentation for orcestra-downloader
@@ -19,7 +19,7 @@ extra_css: []
 remote_branch: gh-pages
 
 # Address when using 'mkdocs serve', format is 'address:port'
-dev_addr: 127.0.0.1:8000
+dev_addr: 127.0.0.1:8001
 
 # The layout of the navigation links
 nav:
