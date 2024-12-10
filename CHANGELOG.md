@@ -1,7 +1,26 @@
 # CHANGELOG
 
 
+## v0.5.0 (2024-12-10)
+
+### Features
+
+- Add RadiomicSet model, and enhance caching functionality
+  ([`2340670`](https://github.com/bhklab/orcestra-downloader/commit/2340670fb5f2a64060aa74f9043782edbc129f6c))
+
+- Enhance dataset management commands with optional dataset name and summary printing
+  ([`d20afd7`](https://github.com/bhklab/orcestra-downloader/commit/d20afd7d158f82488de8c822e7cd3556da37c060))
+
+- Update cache response handling in tests to include name parameter
+  ([`b2f99db`](https://github.com/bhklab/orcestra-downloader/commit/b2f99db22a0e330e2fc61a407e3956a5f6401454))
+
+
 ## v0.4.0 (2024-12-10)
+
+### Chores
+
+- **sem-ver**: 0.4.0
+  ([`0e90577`](https://github.com/bhklab/orcestra-downloader/commit/0e90577522122dafa6bb1c12499ffcb1bccb84e3))
 
 ### Features
 
