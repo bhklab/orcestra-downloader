@@ -149,7 +149,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         id: release
-        run: pixi run release
+        run: pixi run --environment ${{ matrix.env }} release
 
       - name: Test Outputs of semantic release step
         run: |
