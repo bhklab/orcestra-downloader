@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Dict, Type, List
 
 import click
-from click import Group, MultiCommand
+from click import Group, MultiCommand, Context, HelpFormatter
 
 from pathlib import Path
 from orcestradownloader.logging_config import set_log_verbosity
@@ -106,7 +106,6 @@ class DatasetMultiCommand(MultiCommand):
 					manager.print_one_table(name)
 					
 
-
 			@ds_group.command(name='download')
 			@click.option('--overwrite', '-o', is_flag=True, help='Overwrite existing file, if it exists.', default=False, show_default=True)
 			@click.option('--filename', '-f', help='Filename to save the file as. Defaults to the name of the dataset', default=None, type=str, required=False)
@@ -139,12 +138,45 @@ class DatasetMultiCommand(MultiCommand):
 			return ds_group
 		return None
 
+	def format_commands(self, ctx: Context, formatter: HelpFormatter) -> None:
+		"""Extra format methods for multi methods that adds all the commands
+		after the options.
+		"""
+		commands = []
+		for subcommand in self.list_commands(ctx):
+				cmd = self.get_command(ctx, subcommand)
+				# What is this, the tool lied about a command.  Ignore it
+				if cmd is None:
+						continue
+				if cmd.hidden:
+						continue
+
+				commands.append((subcommand, cmd))
+
+		# allow for 3 times the default spacing
+		if len(commands):
+				limit = formatter.width - 6 - max(len(cmd[0]) for cmd in commands)
+
+				rows = []
+				for subcommand, cmd in commands:
+						help = cmd.get_short_help_str(limit)
+						rows.append((subcommand, help))
+
+				if rows:
+						with formatter.section("Dataset Types"):
+								formatter.write_dl(rows)
+
 	def format_usage(self, ctx, formatter):
 		"""Custom string for the Usage section of the help page."""
 		formatter.write_usage(
 			"orcestra",
 			"[DATASET_TYPE] [SUBCOMMAND] [ARGS]..."
 		)
+
+	def format_options(self, ctx: Context, formatter: HelpFormatter) -> None:
+		"""Custom override so the dataset types are listed first."""
+		self.format_commands(ctx, formatter)
+		super(MultiCommand, self).format_options(ctx, formatter)
 
 @click.command(cls=DatasetMultiCommand, context_settings=CONTEXT_SETTINGS, invoke_without_command=True)
 @click.option('-r', '--refresh', is_flag=True, help='Fetch all datasets and hydrate the cache.', default=False, show_default=True)
@@ -165,8 +197,16 @@ def cli(ctx, refresh: bool = False, verbose: int = 0, quiet: bool = False):
 	\b
 	Example:
 	\b
-		orcestra pharmacosets list
-		orcestra xevasets table --force
+		list radiosets
+		$ orcestra radiosets list
+
+	\b
+		print a table of all xevasets while refreshing the cache
+		$ orcestra xevasets table --force
+
+	\b
+		print a table of a specific dataset with more details
+		$ orcestra pharmacosets table 'GDSC_2020(v2-8.2)'
 	
 	To get help on a subcommand, use:
 
