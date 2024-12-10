@@ -4,19 +4,20 @@ import difflib
 import aiohttp
 import asyncio
 from rich.progress import Progress
-from dataclasses import dataclass, field
-from typing import List, Optional, Any
+from typing import List, Any
 from pathlib import Path
-from datetime import datetime
 from rich.table import Table
 from rich.console import Console
 from orcestradownloader.cache import Cache
 from orcestradownloader.models.pset import PharmacoSet
 from orcestradownloader.models.clinical_icb import DatasetRecord
 from orcestradownloader.models.radioset import RadioSet
+from orcestradownloader.models.toxicoset import ToxicoSet
 from orcestradownloader.logging_config import logger as log
+from orcestradownloader.models.xevaset import XevaSet
 
 CACHE_DIR = Path.home() / ".cache/orcestradownloader"
+
 PHARMACOS_CACHE_FILE = "pharmacosets.json"
 ICB_CACHE_FILE = "icb_records.json"
 RADIOSETS_CACHE_FILE = "radiosets.json"
@@ -39,6 +40,8 @@ class UnifiedDataManager:
         self.pharmacosets: List[PharmacoSet] = []
         self.icb_records: List[DatasetRecord] = []
         self.radiosets: List[RadioSet] = []
+        self.xevasets: List[XevaSet] = []
+        self.toxicosets: List[ToxicoSet] = []
         asyncio.run(self.fetch_all(force))
 
     async def fetch_data(self, url: str, cache: Cache, force: bool) -> List[dict]:
@@ -87,7 +90,14 @@ class UnifiedDataManager:
         self.pharmacosets = [PharmacoSet.from_json(data) for data in pharmaco_data]
         self.icb_records = [DatasetRecord.from_json(data) for data in icb_data]
         self.radiosets = [RadioSet.from_json(data) for data in radiosets_data]
-        log.info("Loaded %d PharmacoSets and %d ICB records.", len(self.pharmacosets), len(self.icb_records))
+        self.xevasets = [XevaSet.from_json(data) for data in xevasets_data]
+        self.toxicosets = [ToxicoSet.from_json(data) for data in toxicosets_data]
+        log.info("Loaded %d XevaSets.", len(self.xevasets))
+        log.info("Loaded %d PharmacoSets", len(self.pharmacosets))
+        log.info("Loaded %d ICB records.", len(self.icb_records))
+        log.info("Loaded %d RadioSets.", len(self.radiosets))
+        log.info("Loaded %d ToxicoSets.", len(self.toxicosets))
+
 
     def find_similar(self, name: str, items: List[Any], n: int = 3, cutoff: float = 0.3) -> List[str]:
         """Find similar names from a given list."""
@@ -124,6 +134,8 @@ class UnifiedDataManager:
         self.print_table(self.pharmacosets, "PharmacoSets")
         self.print_table(self.icb_records, "ICB Records")
         self.print_table(self.radiosets, "RadioSets")
+        self.print_table(self.xevasets, "XevaSets")
+        self.print_table(self.toxicosets, "ToxicoSets")
 
 
 @click.command()
