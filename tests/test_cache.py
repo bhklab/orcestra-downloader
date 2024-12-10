@@ -1,5 +1,4 @@
 import pytest
-from pathlib import Path
 import json
 from datetime import datetime, timedelta
 from orcestradownloader.cache import Cache
@@ -26,7 +25,7 @@ def cache_instance(cache_dir, cache_file):
 
 def test_cache_file_creation(cache_instance, cache_dir, sample_data):
     """Test that the cache file is created and contains valid data."""
-    cache_instance.cache_response(sample_data)
+    cache_instance.cache_response("Test",sample_data)
     assert cache_instance.cache_file.exists(), "Cache file was not created."
 
     with cache_instance.cache_file.open("r") as f:
@@ -38,7 +37,7 @@ def test_cache_file_creation(cache_instance, cache_dir, sample_data):
 
 def test_get_cached_response_valid(cache_instance, sample_data):
     """Test that a valid cache is returned."""
-    cache_instance.cache_response(sample_data)
+    cache_instance.cache_response("Test",sample_data)
     response = cache_instance.get_cached_response(name="Test")
     assert response == sample_data, "Cached response does not match the expected data."
 
@@ -83,7 +82,7 @@ def test_cache_file_outdated_handling(cache_instance, cache_file, sample_data, c
 def test_cache_file_logging(cache_instance, sample_data, caplog):
     """Test that logging occurs when using a valid cache."""
     caplog.set_level("INFO")
-    cache_instance.cache_response(sample_data)
+    cache_instance.cache_response("Test",sample_data)
     response = cache_instance.get_cached_response(name="Test")
     assert response == sample_data, "Cached response does not match the expected data."
 
