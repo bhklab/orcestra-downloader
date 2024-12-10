@@ -9,8 +9,7 @@ from click import Group, MultiCommand
 from pathlib import Path
 from orcestradownloader.logging_config import set_log_verbosity
 from orcestradownloader.managers import REGISTRY, DatasetManager, UnifiedDataManager
-from orcestradownloader.models import ICBSet, PharmacoSet, RadioSet, ToxicoSet, XevaSet
-
+from orcestradownloader.models import ICBSet, PharmacoSet, RadioSet, ToxicoSet, XevaSet, RadiomicSet
 
 @dataclass
 class DatasetConfig:
@@ -21,7 +20,7 @@ class DatasetConfig:
 
 DATASET_CONFIG: Dict[str, DatasetConfig] = {
 	'pharmacosets': DatasetConfig(
-		url='https://orcestra.ca/api/psets/available',
+		url='https://orcestra.ca/api/pset/available',
 		cache_file='pharmacosets.json',
 		dataset_type=PharmacoSet
 	),
@@ -31,19 +30,24 @@ DATASET_CONFIG: Dict[str, DatasetConfig] = {
 		dataset_type=ICBSet
 	),
 	'radiosets': DatasetConfig(
-		url='https://orcestra.ca/api/radiosets/available',
+		url='https://orcestra.ca/api/radioset/available',
 		cache_file='radiosets.json',
 		dataset_type=RadioSet
 	),
 	'xevasets': DatasetConfig(
-		url='https://orcestra.ca/api/xevasets/available',
+		url='https://orcestra.ca/api/xevaset/available',
 		cache_file='xevasets.json',
 		dataset_type=XevaSet
 	),
 	'toxicosets': DatasetConfig(
-		url='https://orcestra.ca/api/toxicosets/available',
+		url='https://orcestra.ca/api/toxicoset/available',
 		cache_file='toxicosets.json',
 		dataset_type=ToxicoSet
+	),
+	'radiomicsets': DatasetConfig(
+		url='https://orcestra.ca/api/radiomicset/available',
+		cache_file='radiomicsets.json',
+		dataset_type=RadiomicSet
 	),
 }
 
@@ -58,7 +62,6 @@ for name, config in DATASET_CONFIG.items():
 
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
-
 
 class DatasetMultiCommand(MultiCommand):
 	"""
@@ -127,10 +130,12 @@ class DatasetMultiCommand(MultiCommand):
 			"[DATASET_TYPE] [SUBCOMMAND] [ARGS]..."
 		)
 
-@click.command(cls=DatasetMultiCommand, context_settings=CONTEXT_SETTINGS)
+@click.command(cls=DatasetMultiCommand, context_settings=CONTEXT_SETTINGS, invoke_without_command=True)
 @click.help_option("-h", "--help", help="Show this message and exit.")
+@click.option('-r', '--refresh', is_flag=True, help='Fetch all datasets and hydrate the cache.', default=False, show_default=True)
+@set_log_verbosity()
 @click.pass_context
-def cli(ctx, force: bool = False, verbose: int = 1, quiet: bool = False):
+def cli(ctx, refresh: bool = False, verbose: int = 0, quiet: bool = False):
 	"""
 	Interactive CLI for datasets on orcestra.ca
 	-------------------------------------------
@@ -153,7 +158,13 @@ def cli(ctx, force: bool = False, verbose: int = 1, quiet: bool = False):
 
 	"""
 	ctx.ensure_object(dict)
-	ctx.obj['force'] = force
+	if refresh:
+		manager = UnifiedDataManager(force=True)
+		manager.hydrate_cache()
+		manager.list_all()
+		return
+	click.echo(ctx.get_help())
+
 
 
 if __name__ == '__main__':

@@ -49,9 +49,9 @@ class Cache:
 			log.warning('Failed to load cache: %s', e)
 		return None
 
-	def cache_response(self, data: List[dict]) -> None:
+	def cache_response(self, name: str, data: List[dict]) -> None:
 		"""Save the response to the cache."""
 		self.cache_dir.mkdir(parents=True, exist_ok=True)
 		with self.cache_file.open('w') as f:
 			json.dump({'date': datetime.now().isoformat(), 'data': data}, f)
-		log.info('Response cached successfully.')
+		log.info('[bold magenta]%s:[/] Response cached successfully.', name)

@@ -88,8 +88,10 @@ class DatasetManager:
 		async with aiohttp.ClientSession() as session:  # noqa: SIM117
 			async with session.get(self.url) as response:
 				data = await response.json()
-				log.info('Fetched %d items from API.', len(data))
-				self.cache.cache_response(data)
+				log.info(
+					'[bold magenta]%s:[/] Fetched %d items from API.', name, len(data)
+				)
+				self.cache.cache_response(name, data)
 				self.datasets = [self.dataset_type.from_json(item) for item in data]
 
 	def print(self, title: str, row_generator: Callable) -> None:
@@ -133,6 +135,10 @@ class UnifiedDataManager:
 
 	def fetch_one(self, name: str) -> None:
 		asyncio.run(self.fetch_by_name(name, force=self.force))
+
+	def hydrate_cache(self) -> None:
+		"""Hydrate the cache."""
+		asyncio.run(self.fetch_all(force=True))
 
 	async def fetch_by_name(
 		self, name: str, force: bool = False, progress: Optional[Progress] = None
@@ -219,10 +225,11 @@ class UnifiedDataManager:
 			for ds_name in ds_names:
 				click.echo(ds_name)
 
-	def list_all(self, pretty: bool = True) -> None:
+	def list_all(self, pretty: bool = True, force: bool = False) -> None:
 		"""List all datasets."""
 		# Fetch data asynchronously
-		asyncio.run(self.fetch_all(self.force))
+		if force:
+			asyncio.run(self.fetch_all(self.force))
 
 		ds_dict = defaultdict(list)
 
