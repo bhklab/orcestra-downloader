@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.2.1 (2024-12-10)
+
+### Bug Fixes
+
+- Update CI workflow to use matrix for Python version and environment variable in Publish-To-PyPi
+  job
+  ([`593cb33`](https://github.com/bhklab/orcestra-downloader/commit/593cb3339b9617e36dd2b3198b82f0035c4c9f55))
+
+
 ## v0.2.0 (2024-12-10)
 
 ### Bug Fixes
@@ -31,6 +40,11 @@
 
 - Update sha256 checksum for orcestra-downloader in pixi.lock
   ([`f259f13`](https://github.com/bhklab/orcestra-downloader/commit/f259f136efe078444d2e7d245517183955021761))
+
+### Chores
+
+- **sem-ver**: 0.2.0
+  ([`fdbf92e`](https://github.com/bhklab/orcestra-downloader/commit/fdbf92e069b12e4826647f059404ce28410210a9))
 
 ### Features
 
