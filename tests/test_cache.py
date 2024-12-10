@@ -39,7 +39,7 @@ def test_cache_file_creation(cache_instance, cache_dir, sample_data):
 def test_get_cached_response_valid(cache_instance, sample_data):
     """Test that a valid cache is returned."""
     cache_instance.cache_response(sample_data)
-    response = cache_instance.get_cached_response()
+    response = cache_instance.get_cached_response(name="Test")
     assert response == sample_data, "Cached response does not match the expected data."
 
 def test_get_cached_response_outdated(cache_instance, cache_file, sample_data):
@@ -49,12 +49,12 @@ def test_get_cached_response_outdated(cache_instance, cache_file, sample_data):
     with cache_file.open("w") as f:
         json.dump({"date": outdated_date, "data": sample_data}, f)
 
-    response = cache_instance.get_cached_response()
+    response = cache_instance.get_cached_response(name="Test")
     assert response is None, "Outdated cache should return None."
 
 def test_get_cached_response_missing_file(cache_instance):
     """Test that a missing cache file returns None."""
-    response = cache_instance.get_cached_response()
+    response = cache_instance.get_cached_response(name="Test")
     assert response is None, "Missing cache file should return None."
 
 def test_get_cached_response_invalid_json(cache_instance, cache_file):
@@ -63,7 +63,7 @@ def test_get_cached_response_invalid_json(cache_instance, cache_file):
     with cache_file.open("w") as f:
         f.write("{invalid_json}")
 
-    response = cache_instance.get_cached_response()
+    response = cache_instance.get_cached_response(name="Test")
     assert response is None, "Invalid JSON in the cache should return None."
 
 def test_cache_file_outdated_handling(cache_instance, cache_file, sample_data, caplog):
@@ -74,7 +74,7 @@ def test_cache_file_outdated_handling(cache_instance, cache_file, sample_data, c
     with cache_file.open("w") as f:
         json.dump({"date": outdated_date, "data": sample_data}, f)
 
-    response = cache_instance.get_cached_response()
+    response = cache_instance.get_cached_response(name="Test")
     assert response is None, "Outdated cache should return None."
     
     assert any("Cache is outdated" in record.message for record in caplog.records), \
@@ -84,7 +84,7 @@ def test_cache_file_logging(cache_instance, sample_data, caplog):
     """Test that logging occurs when using a valid cache."""
     caplog.set_level("INFO")
     cache_instance.cache_response(sample_data)
-    response = cache_instance.get_cached_response()
+    response = cache_instance.get_cached_response(name="Test")
     assert response == sample_data, "Cached response does not match the expected data."
 
     assert any("Using cached response" in record.message for record in caplog.records), \
