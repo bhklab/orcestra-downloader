@@ -1,119 +1,46 @@
-from dataclasses import dataclass, field
-from datetime import datetime
-from typing import List, Optional
+"""
+radioset.py
+
+This module provides the RadioSet class for managing radiogenomic datasets
+in the OrcestraDownloader project.
+
+Classes:
+    RadioSet: Class representing a radiogenomic dataset.
+
+Author:
+    Your Name <your.email@example.com>
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
 
 from orcestradownloader.logging_config import logger as log
-from orcestradownloader.models.common import (
-	AvailableDatatype,
-	Dataset,
-	GenomeType,
-	Publication,
-	VersionInfo,
-)
+from orcestradownloader.models.base import BaseModel
 
 
 @dataclass
-class RadioSet:
-	name: str
-	doi: str
-	download_link: str
-	date_created: Optional[datetime]
-	dataset: Dataset
-	available_datatypes: List[AvailableDatatype] = field(default_factory=list)
+class RadioSet(BaseModel):
+	"""
+	Represents a radiogenomic dataset.
+
+	Inherits from BaseModel for shared functionality.
+	"""
 
 	@classmethod
-	def from_json(cls, data: dict) -> 'RadioSet':
+	def from_json(cls, data: dict) -> RadioSet:
+		"""
+		Create a RadioSet instance from a JSON object.
+
+		Parameters
+		----------
+		data : dict
+		    The JSON object containing data for the record.
+
+		Returns
+		-------
+		RadioSet
+		    An instance of RadioSet.
+		"""
 		log.debug('Parsing RadioSet from JSON: %s', data)
-
-		# Parse the dataset information
-		dataset_data = data['dataset']
-		version_info = VersionInfo(
-			version=dataset_data['versionInfo']['version'],
-			dataset_type=None,  # "type" is null in the provided data
-			publication=[
-				Publication(**pub) for pub in dataset_data['versionInfo']['publication']
-			],
-		)
-		dataset = Dataset(
-			name=dataset_data['name'],
-			version_info=version_info,
-		)
-
-		# Parse available datatypes
-		datatypes = [
-			AvailableDatatype(
-				name=datatype.get('name'),
-				genome_type=GenomeType(datatype['genomeType'])
-				if 'genomeType' in datatype
-				else None,
-				source=datatype.get('source'),
-			)
-			for datatype in data.get('availableDatatypes', [])
-		]
-
-		# Parse the RadioSet instance
-		date_created = data.get('dateCreated')
-		if date_created:
-			date_created = datetime.fromisoformat(
-				date_created.rstrip('Z')
-			)  # Remove "Z" for proper parsing
-
-		return cls(
-			name=data['name'],
-			doi=data['doi'],
-			download_link=data['downloadLink'],
-			date_created=date_created,
-			dataset=dataset,
-			available_datatypes=datatypes,
-		)
-
-	@property
-	def datatypes(self) -> List[str]:
-		return [datatype.name for datatype in self.available_datatypes]
-
-	def print_summary(self) -> None:
-		"""Print a summary of the RadioSet."""
-		from rich.console import Console
-		from rich.table import Table
-
-		table = Table(title='RadioSet Summary')
-
-		table.add_column('Field', style='bold cyan', no_wrap=True)
-		table.add_column('Value', style='magenta')
-
-		table.add_row('Name', self.name)
-		table.add_row('DOI', self.doi)
-		table.add_row(
-			'Date Created',
-			self.date_created.isoformat() if self.date_created else 'N/A',
-		)
-		table.add_row('Download Link', self.download_link)
-		table.add_row('Dataset Name', self.dataset.name)
-		table.add_row('Dataset Version', self.dataset.version_info.version)
-		table.add_row(
-			'Sensitivity Source',
-			self.dataset.version_info.publication[0].link
-			if self.dataset.version_info.publication
-			else 'N/A',
-		)
-		table.add_row(
-			'Available Datatypes',
-			', '.join(self.datatypes) if self.datatypes else 'N/A',
-		)
-
-		console = Console()
-		console.print(table)
-
-
-if __name__ == '__main__':
-	import json
-	from pathlib import Path
-
-	from rich import print as rprint
-
-	cache_file = Path.home() / '.cache/orcestradownloader/radiosets.json'
-	with cache_file.open('r') as f:
-		data = json.load(f)
-
-	radiosets = [RadioSet.from_json(radioset) for radioset in data['data']]
-	rprint(radiosets)
+		return super().from_json(data)

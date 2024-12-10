@@ -1,102 +1,82 @@
-from dataclasses import dataclass, field
-from datetime import datetime
-from typing import List, Optional
+"""
+pset.py
 
-from rich.console import Console
-from rich.table import Table
+This module provides the PharmacoSet class, which extends the BaseModel class, for managing
+pharmacogenomic datasets in the OrcestraDownloader project.
+
+Classes:
+    PharmacoSet: Class representing a pharmacogenomic dataset.
+
+Author:
+    Your Name <your.email@example.com>
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
 
 from orcestradownloader.logging_config import logger as log
-from orcestradownloader.models.common import (
-	AbstractRecord,
-	AvailableDatatype,
-	Dataset,
-	GenomeType,
-	Publication,
-	TypeEnum,
-	VersionInfo,
-)
+from orcestradownloader.models.base import BaseModel
 
 
 @dataclass
-class PharmacoSet(AbstractRecord):
-	name: str
-	doi: str
-	download_link: str
-	date_created: Optional[datetime]
-	dataset: Dataset
-	available_datatypes: List[AvailableDatatype] = field(default_factory=list)
+class PharmacoSet(BaseModel):
+	"""
+	Represents a pharmacogenomic dataset.
+
+	This class inherits common attributes and methods from BaseModel and may include
+	additional logic or methods specific to pharmacogenomic datasets.
+
+	Attributes
+	----------
+	name : str
+	    The name of the dataset record.
+	doi : str
+	    The DOI of the dataset record.
+	download_link : str
+	    The link to download the dataset.
+	date_created : Optional[datetime]
+	    The date when the dataset was created.
+	dataset : Dataset
+	    The dataset associated with the record.
+	available_datatypes : List[AvailableDatatype]
+	    A list of available datatypes for the dataset.
+	"""
 
 	@classmethod
-	def from_json(cls, data: dict) -> 'PharmacoSet':
+	def from_json(cls, data: dict) -> PharmacoSet:
+		"""
+		Create a PharmacoSet instance from a JSON object.
+
+		Parameters
+		----------
+		data : dict
+		    The JSON object containing data for the record.
+
+		Returns
+		-------
+		PharmacoSet
+		    An instance of PharmacoSet.
+		"""
 		log.debug('Parsing PharmacoSet from JSON: %s', data)
-		date_created = data.get('dateCreated')
-		if date_created:
-			date_created = datetime.fromisoformat(date_created)
-		dataset_type = data.get('dataset', {}).get('versionInfo', {}).get('type')
-		version_info = VersionInfo(
-			version=data['dataset']['versionInfo']['version'],
-			dataset_type=TypeEnum(dataset_type) if dataset_type else None,
-			publication=[
-				Publication(**pub)
-				for pub in data['dataset']['versionInfo']['publication']
-			],
-		)
-		dataset = Dataset(name=data['dataset']['name'], version_info=version_info)
-		datatypes = [
-			AvailableDatatype(
-				name=adt['name'],
-				genome_type=GenomeType(adt['genomeType']),
-				source=adt.get('source'),
-			)
-			for adt in data.get('availableDatatypes', [])
-		]
-		return cls(
-			name=data['name'],
-			doi=data['doi'],
-			download_link=data['downloadLink'],
-			date_created=date_created,
-			dataset=dataset,
-			available_datatypes=datatypes,
-		)
-
-	@property
-	def datatypes(self) -> List[str]:
-		return [adt.name for adt in self.available_datatypes]
-
-	def print_summary(self) -> None:
-		"""Print a summary table for the PharmacoSet."""
-		table = Table(title='PharmacoSet Summary')
-
-		table.add_column('Field', style='bold cyan', no_wrap=True)
-		table.add_column('Value', style='magenta')
-
-		table.add_row('Name', self.name)
-		table.add_row('Dataset Name', self.dataset.name)
-		table.add_row('DOI', self.doi)
-		table.add_row(
-			'Date Created',
-			self.date_created.isoformat() if self.date_created else 'N/A',
-		)
-		table.add_row('Download Link', self.download_link)
-		table.add_row('Dataset Sensitivity Version', self.dataset.version_info.version)
-		table.add_row(
-			'Available Datatypes',
-			', '.join([dt.name for dt in self.available_datatypes]),
-		)
-
-		console = Console()
-		console.print(table)
+		return super().from_json(data)
 
 
+# Example usage
 if __name__ == '__main__':
 	import json
 	from pathlib import Path
 
-	from rich import print as rprint
-
+	# Path to the cache file
 	cache_file = Path.home() / '.cache/orcestradownloader/psets.json'
+
+	# Read the JSON data
 	with cache_file.open('r') as f:
 		data = json.load(f)
 
-	psets = [PharmacoSet.from_json(pset) for pset in data['data']]
-	rprint(psets)
+	# Create a list of PharmacoSet instances
+	psets = [PharmacoSet.from_json(pset_data) for pset_data in data['data']]
+
+	# Print summaries of each PharmacoSet
+	for pset in psets:
+		pset.print_summary()

@@ -1,71 +1,46 @@
-from dataclasses import dataclass
-from datetime import datetime
-from typing import List, Optional
+"""
+clinical_icb.py
 
-from .common import (
-	AbstractRecord,
-	AvailableDatatype,
-	Dataset,
-	GenomeType,
-	Publication,
-	VersionInfo,
-)
+This module provides the ICBSet class for managing clinical datasets
+in the OrcestraDownloader project.
+
+Classes:
+    ICBSet: Class representing a clinical dataset.
+
+Author:
+    Your Name <your.email@example.com>
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+from orcestradownloader.logging_config import logger as log
+from orcestradownloader.models.base import BaseModel
 
 
 @dataclass
-class DatasetRecord(AbstractRecord):
-	name: str
-	doi: str
-	download_link: str
-	date_created: Optional[datetime]
-	dataset: Dataset
-	available_datatypes: List[AvailableDatatype]
+class ICBSet(BaseModel):
+	"""
+	Represents a clinical dataset record.
+
+	Inherits from BaseModel for shared functionality.
+	"""
 
 	@classmethod
-	def from_json(cls, record: dict) -> 'DatasetRecord':
-		publications = [
-			Publication(**pub)
-			for pub in record['dataset']['versionInfo']['publication']
-		]
-		version_info = VersionInfo(
-			version=record['dataset']['versionInfo']['version'],
-			dataset_type=record['dataset']['versionInfo'].get('type'),
-			publication=publications,
-		)
-		dataset = Dataset(name=record['dataset']['name'], version_info=version_info)
+	def from_json(cls, data: dict) -> ICBSet:
+		"""
+		Create a ICBSet instance from a JSON object.
 
-		datatypes = [
-			AvailableDatatype(
-				name=adt['name'],
-				genome_type=GenomeType(adt['genomeType']),
-				source=adt.get('source'),
-			)
-			for adt in record.get('availableDatatypes', [])
-		]
+		Parameters
+		----------
+		data : dict
+		    The JSON object containing data for the record.
 
-		date_created = record.get('dateCreated')
-		if date_created:
-			date_created = datetime.fromisoformat(date_created)
-		return cls(
-			name=record['name'],
-			doi=record['doi'],
-			download_link=record['downloadLink'],
-			date_created=date_created,
-			dataset=dataset,
-			available_datatypes=datatypes,
-		)
-
-	@property
-	def datatypes(self) -> List[str]:
-		return [adt.name for adt in self.available_datatypes]
-
-	def print_summary(self) -> None:
-		"""Print a summary for the DatasetRecord."""
-		print(f'Dataset Record: {self.name}')
-		print(f'DOI: {self.doi}')
-		print(f'Download Link: {self.download_link}')
-		print(f'Date Created: {self.date_created}')
-		print(f'Dataset Name: {self.dataset.name}')
-		print(
-			f"Available Datatypes: {', '.join([adt.name for adt in self.available_datatypes])}"
-		)
+		Returns
+		-------
+		ICBSet
+		    An instance of ICBSet.
+		"""
+		log.debug('Parsing ICBSet from JSON: %s', data)
+		return super().from_json(data)

@@ -14,7 +14,7 @@ class Cache:
 		self.cache_file = cache_dir / cache_file
 		self.cache_days_to_keep = cache_days_to_keep
 
-	def get_cached_response(self) -> Optional[List[dict]]:
+	def get_cached_response(self, name: str) -> Optional[List[dict]]:
 		"""Retrieve cached response if it exists and is up-to-date."""
 		log.debug('Checking for cached response...')
 		if not self.cache_file.exists():
@@ -35,7 +35,12 @@ class Cache:
 						daysago = f'{hours} hours ago'
 					else:
 						daysago = f'{minutes} minutes ago'
-				log.info('Using cached response from %s', daysago)
+				log.info(
+					'[bold magenta]%s:[/] Using cached response from %s from file://%s',
+					name,
+					daysago,
+					self.cache_file,
+				)
 				response_data: List[dict] = cached_data['data']
 				return response_data
 			else:

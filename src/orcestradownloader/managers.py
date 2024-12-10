@@ -1,181 +1,237 @@
 from __future__ import annotations
 
 import asyncio
-import difflib
+from collections import defaultdict
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, List
+from typing import Any, Callable, Dict, List, Optional, Type
 
 import aiohttp
-import click
 from rich.console import Console
 from rich.progress import Progress
 from rich.table import Table
 
 from orcestradownloader.cache import Cache
 from orcestradownloader.logging_config import logger as log
-from orcestradownloader.models.clinical_icb import DatasetRecord
-from orcestradownloader.models.pset import PharmacoSet
-from orcestradownloader.models.radioset import RadioSet
-from orcestradownloader.models.toxicoset import ToxicoSet
-from orcestradownloader.models.xevaset import XevaSet
-import random
+
 CACHE_DIR = Path.home() / '.cache/orcestradownloader'
 
-PHARMACOS_CACHE_FILE = 'pharmacosets.json'
-ICB_CACHE_FILE = 'icb_records.json'
-RADIOSETS_CACHE_FILE = 'radiosets.json'
-XEVASETS_CACHE_FILE = 'xevaset.json'
-TOXICOSETS_CACHE_FILE = 'toxicoset.json'
 
 CACHE_DAYS_TO_KEEP = 7
 
 
-class UnifiedDataManager:
-	"""Unified manager to handle both PharmacoSets and ICB Records."""
+class TablePrinter:
+	"""Handles table rendering for datasets using Rich."""
 
-	def __init__(self, force: bool = False) -> None:
-		self.pharmaco_cache = Cache(CACHE_DIR, PHARMACOS_CACHE_FILE, CACHE_DAYS_TO_KEEP)
-		self.icb_cache = Cache(CACHE_DIR, ICB_CACHE_FILE, CACHE_DAYS_TO_KEEP)
-		self.radiosets_cache = Cache(
-			CACHE_DIR, RADIOSETS_CACHE_FILE, CACHE_DAYS_TO_KEEP
-		)
-		self.xevasets_cache = Cache(CACHE_DIR, XEVASETS_CACHE_FILE, CACHE_DAYS_TO_KEEP)
-		self.toxicosets_cache = Cache(
-			CACHE_DIR, TOXICOSETS_CACHE_FILE, CACHE_DAYS_TO_KEEP
-		)
+	def __init__(self, title: str, headers: List[str]) -> None:
+		self.title = title
+		self.headers = headers
 
-		self.pharmacosets: List[PharmacoSet] = []
-		self.icb_records: List[DatasetRecord] = []
-		self.radiosets: List[RadioSet] = []
-		self.xevasets: List[XevaSet] = []
-		self.toxicosets: List[ToxicoSet] = []
-		asyncio.run(self.fetch_all(force))
+	@property
+	def color_list(self) -> List[str]:
+		"""Simple list of colors for use in Rich."""
+		return ['bold white', 'magenta', 'cyan', 'green', 'yellow', 'red', 'blue']
 
-	async def fetch_data(self, url: str, cache: Cache, force: bool) -> List[dict]:
-		"""Fetch data from the API."""
-		log.info('Fetching data from %s (force=%s)...', url, force)
-		if not force and (cached_data := cache.get_cached_response()):
-			return cached_data
+	def print_table(self, items: List[Any], row_generator: Callable) -> None:
+		"""
+		Prints a table of items.
 
-		log.info('Making API call to %s', url)
-		async with aiohttp.ClientSession() as session:  # noqa: SIM117
-			async with session.get(url) as response:
-				data = await response.json()
-				random_1_to_10 = random.randint(1, 10)
-				log.info('Sleeping for %d seconds...', random_1_to_10)
-				await asyncio.sleep(random_1_to_10)
-				log.info('Fetched %d items from API.', len(data))
-				cache.cache_response(data)
-				response_data: List[dict] = data
-				return response_data
+		Parameters
+		----------
+		items : List[Any]
+				A list of dataset items.
+		row_generator : callable
+				A function to generate rows from items.
+		"""
+		console = Console()
+		table = Table(title=self.title)
 
-	async def fetch_all(self, force: bool = False) -> None:
-		"""Fetch PharmacoSets and ICB records asynchronously."""
-		pharmaco_url = 'https://orcestra.ca/api/psets/available'
-		icb_url = 'https://orcestra.ca/api/clinical_icb/available'
-		radiosets_url = 'https://orcestra.ca/api/radiosets/available'
-		xevasets_url = 'https://orcestra.ca/api/xevasets/available'
-		toxicosets_url = 'https://orcestra.ca/api/toxicosets/available'
-
-		with Progress(transient=True) as progress:
-			pharmaco_task = progress.add_task(
-				'[cyan]Fetching PharmacoSets...', total=None
+		for header in self.headers:
+			# table.add_column(header, justify="left", style="cyan", no_wrap=True)
+			table.add_column(
+				header,
+				justify='left',
+				style=self.color_list[self.headers.index(header)],
+				no_wrap=True,
 			)
-			icb_task = progress.add_task('[cyan]Fetching ICB Records...', total=None)
-			radiosets_task = progress.add_task(
-				'[cyan]Fetching RadioSets...', total=None
-			)
-			xevasets_task = progress.add_task('[cyan]Fetching XevaSets...', total=None)
-			toxicosets_task = progress.add_task(
-				'[cyan]Fetching ToxicoSets...', total=None
-			)
-
-			(
-				pharmaco_data,
-				icb_data,
-				radiosets_data,
-				xevasets_data,
-				toxicosets_data,
-			) = await asyncio.gather(
-				self.fetch_data(pharmaco_url, self.pharmaco_cache, force),
-				self.fetch_data(icb_url, self.icb_cache, force),
-				self.fetch_data(radiosets_url, self.radiosets_cache, force),
-				self.fetch_data(xevasets_url, self.xevasets_cache, force),
-				self.fetch_data(toxicosets_url, self.toxicosets_cache, force),
-			)
-
-			progress.update(pharmaco_task, completed=True)
-			progress.update(icb_task, completed=True)
-			progress.update(radiosets_task, completed=True)
-			progress.update(xevasets_task, completed=True)
-			progress.update(toxicosets_task, completed=True)
-
-		self.pharmacosets = [PharmacoSet.from_json(data) for data in pharmaco_data]
-		self.icb_records = [DatasetRecord.from_json(data) for data in icb_data]
-		self.radiosets = [RadioSet.from_json(data) for data in radiosets_data]
-		self.xevasets = [XevaSet.from_json(data) for data in xevasets_data]
-		self.toxicosets = [ToxicoSet.from_json(data) for data in toxicosets_data]
-		log.info('Loaded %d XevaSets.', len(self.xevasets))
-		log.info('Loaded %d PharmacoSets', len(self.pharmacosets))
-		log.info('Loaded %d ICB records.', len(self.icb_records))
-		log.info('Loaded %d RadioSets.', len(self.radiosets))
-		log.info('Loaded %d ToxicoSets.', len(self.toxicosets))
-
-	def find_similar(
-		self, name: str, items: List[Any], n: int = 3, cutoff: float = 0.3
-	) -> List[str]:
-		"""Find similar names from a given list."""
-		names = [item.name for item in items]
-		return difflib.get_close_matches(name, names, n=n, cutoff=cutoff)
-
-	def print_table(self, items: List[Any], title: str, sort: bool = True) -> None:
-		"""Print a table of items."""
-		if sort:
-			items = sorted(items, key=lambda item: item.name.lower())
-
-		table = Table(title=title)
-
-		table.add_column('Name', justify='left', style='cyan', no_wrap=True)
-		table.add_column('Dataset Name', justify='left', style='magenta')
-		# table.add_column('DOI', justify='left', style='yellow')
-		table.add_column('Date Created', justify='left', style='green')
-		table.add_column('Available Datatypes', justify='left', style='blue')
 
 		for item in items:
-			table.add_row(
-				item.name,
-				item.dataset.name,
-				# getattr(item, 'doi', 'N/A'),
-				item.date_created.strftime('%Y-%m-%d')
-				if getattr(item, 'date_created', None)
-				else 'N/A',
-				', '.join(item.datatypes) if hasattr(item, 'datatypes') else 'N/A',
-			)
+			table.add_row(*row_generator(item))
 
-		console = Console()
 		console.print(table)
 
-	def print_all(self) -> None:
-		"""Print both PharmacoSets and ICB records."""
-		self.print_table(self.pharmacosets, 'PharmacoSets')
-		self.print_table(self.icb_records, 'ICB Records')
-		self.print_table(self.radiosets, 'RadioSets')
-		self.print_table(self.xevasets, 'XevaSets')
-		self.print_table(self.toxicosets, 'ToxicoSets')
+
+@dataclass
+class DatasetManager:
+	"""Base class for managing datasets."""
+
+	url: str
+	cache_file: str
+	dataset_type: Type[Any]
+	datasets: List[Any] = field(default_factory=list)
+
+	def __post_init__(self) -> None:
+		self.cache = Cache(CACHE_DIR, self.cache_file, CACHE_DAYS_TO_KEEP)
+
+	async def fetch_data(self, name: str, force: bool = False) -> None:
+		"""Fetch datasets from API or cache."""
+		log.info(
+			'[bold magenta]%s:[/] Fetching data from %s (force=%s)...',
+			name,
+			self.url,
+			force,
+		)
+		if not force and (cached_data := self.cache.get_cached_response(name=name)):
+			self.datasets = [self.dataset_type.from_json(item) for item in cached_data]
+			return
+
+		async with aiohttp.ClientSession() as session:  # noqa: SIM117
+			async with session.get(self.url) as response:
+				data = await response.json()
+				log.info('Fetched %d items from API.', len(data))
+				self.cache.cache_response(data)
+				self.datasets = [self.dataset_type.from_json(item) for item in data]
+
+	def print(self, title: str, row_generator: Callable) -> None:
+		"""Print datasets in a formatted table."""
+		printer = TablePrinter(
+			title, headers=['Name', 'Dataset Name', 'Date Created', 'Datatypes']
+		)
+		printer.print_table(self.datasets, row_generator)
+
+	def names(self) -> List[str]:
+		"""List all datasets."""
+		return [ds.name for ds in self.datasets]
 
 
-@click.command()
-@click.option('--force', is_flag=True, help='Force fetch new data')
-@click.argument('names', nargs=-1, type=str, required=False)
-def cli(names: List[str], force: bool = False) -> None:
-	"""Unified CLI for fetching and managing PharmacoSets and ICB records."""
-	log.info('Starting UnifiedDataManager...')
-	manager = UnifiedDataManager(force=force)
+class DatasetRegistry:
+	"""Registry to hold dataset manager instances."""
 
-	if not names:
-		manager.print_all()
-		return
+	def __init__(self) -> None:
+		self.registry: Dict[str, DatasetManager] = {}
+
+	def register(self, name: str, manager: DatasetManager) -> None:
+		self.registry[name] = manager
+
+	def get_manager(self, name: str) -> DatasetManager:
+		return self.registry[name]
+
+	def get_all_managers(self) -> Dict[str, DatasetManager]:
+		return self.registry
 
 
-if __name__ == '__main__':
-	cli()
+# Register dataset managers
+REGISTRY = DatasetRegistry()
+
+
+class UnifiedDataManager:
+	"""Unified manager to handle all dataset types."""
+
+	def __init__(self, force: bool = False) -> None:
+		self.force = force
+		self.registry = REGISTRY
+
+	def fetch_one(self, name: str) -> None:
+		asyncio.run(self.fetch_by_name(name, force=self.force))
+
+	async def fetch_by_name(
+		self, name: str, force: bool = False, progress: Optional[Progress] = None
+	) -> None:
+		"""Fetch a specific dataset by name."""
+		manager = self.registry.get_all_managers()[name]
+		task = (
+			progress.add_task(f'[cyan]Fetching {name}...', total=None)
+			if progress
+			else None
+		)
+		await manager.fetch_data(name=name, force=force)
+		if progress and task is not None:
+			progress.update(task, completed=True)
+
+	async def fetch_all(self, force: bool = False) -> None:
+		"""Fetch all datasets asynchronously."""
+		with Progress(transient=True) as progress:
+			await asyncio.gather(
+				*[
+					self.fetch_by_name(name, force, progress)
+					for name in self.registry.get_all_managers()
+				]
+			)
+
+	def print_one_table(self, name: str) -> None:
+		"""Print a single dataset."""
+		# Fetch data asynchronously
+		try:
+			self.fetch_one(name)
+		except Exception as e:
+			log.exception('Error fetching %s: %s', name, e)
+			return
+
+		manager = self.registry.get_manager(name)
+		manager.print(
+			title=name.capitalize(),
+			row_generator=lambda item: [
+				item.name,
+				item.dataset.name,
+				item.date_created.strftime('%Y-%m-%d') if item.date_created else 'N/A',
+				', '.join(item.datatypes),
+			],
+		)
+
+	def print_all_table(self) -> None:
+		"""Print all datasets."""
+		# Fetch data asynchronously
+		asyncio.run(self.fetch_all(self.force))
+
+		# Print datasets
+		for name, manager in self.registry.get_all_managers().items():
+			manager.print(
+				title=name.capitalize(),
+				row_generator=lambda item: [
+					item.name,
+					item.dataset.name,
+					item.date_created.strftime('%Y-%m-%d')
+					if item.date_created
+					else 'N/A',
+					', '.join(item.datatypes),
+				],
+			)
+
+	def list_one(self, name: str, pretty: bool = True) -> None:
+		"""List a single dataset."""
+		# Fetch data asynchronously
+		try:
+			self.fetch_one(name)
+		except Exception as e:
+			log.exception('Error fetching %s: %s', name, e)
+			return
+
+		manager = self.registry.get_manager(name)
+		ds_names = manager.names()
+
+		if pretty:
+			Console().print(f'[bold]{name}:[/]')
+			for ds_name in ds_names:
+				Console().print(f'  - {ds_name}')
+		else:
+			Console().print(f'{name}: {ds_names}')
+
+	def list_all(self, pretty: bool = True) -> None:
+		"""List all datasets."""
+		# Fetch data asynchronously
+		asyncio.run(self.fetch_all(self.force))
+
+		ds_dict = defaultdict(list)
+
+		for name, manager in self.registry.get_all_managers().items():
+			ds_names = manager.names()
+			ds_dict[name] = ds_names
+
+		if pretty:
+			for name, ds_names in ds_dict.items():
+				Console().print(f'[bold]{name}:[/]')
+				for ds_name in ds_names:
+					Console().print(f'  - {ds_name}')
+		else:
+			for name, ds_names in ds_dict.items():
+				Console().print(f'{name}: {ds_names}')

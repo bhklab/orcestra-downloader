@@ -5139,7 +5139,7 @@ packages:
 - pypi: .
   name: orcestra-downloader
   version: 0.1.0
-  sha256: b050397bd0c51eb4f35d4f4658267eabb52fd4d81adf2b4156d1b718c17bdb0d
+  sha256: 653a959c3b6b7e61ca9a4798ea87c22ee3a06715feeb0c3520b4370495d9c61e
   requires_dist:
   - rich
   - aiohttp>=3.11.4
