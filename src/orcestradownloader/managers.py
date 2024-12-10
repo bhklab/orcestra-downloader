@@ -4,7 +4,7 @@ import asyncio
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Type
+from typing import Any, Callable, Dict, Generic, List, Optional, Type, TypeVar
 
 import aiohttp
 from rich.console import Console
@@ -13,6 +13,10 @@ from rich.table import Table
 
 from orcestradownloader.cache import Cache
 from orcestradownloader.logging_config import logger as log
+from orcestradownloader.models.base import BaseModel
+
+# Type variable for subclasses of BaseModel
+T = TypeVar('T', bound=BaseModel)
 
 CACHE_DIR = Path.home() / '.cache/orcestradownloader'
 
@@ -62,13 +66,13 @@ class TablePrinter:
 
 
 @dataclass
-class DatasetManager:
+class DatasetManager(Generic[T]):
 	"""Base class for managing datasets."""
 
 	url: str
 	cache_file: str
-	dataset_type: Type[Any]
-	datasets: List[Any] = field(default_factory=list)
+	dataset_type: Type[T]
+	datasets: List[T] = field(default_factory=list)
 
 	def __post_init__(self) -> None:
 		self.cache = Cache(CACHE_DIR, self.cache_file, CACHE_DAYS_TO_KEEP)
@@ -104,6 +108,15 @@ class DatasetManager:
 	def names(self) -> List[str]:
 		"""List all datasets."""
 		return [ds.name for ds in self.datasets]
+
+	def __getitem__(self, name: str) -> T:
+		"""Get a dataset by name."""
+		try:
+			return next(ds for ds in self.datasets if ds.name == name)
+		except StopIteration as se:
+			msg = f'Dataset {name} not found in {self.__class__.__name__}.'
+			msg += f' Available datasets: {", ".join(self.names())}'
+			raise ValueError(msg) from se
 
 
 class DatasetRegistry:
@@ -248,3 +261,43 @@ class UnifiedDataManager:
 
 				for ds_name in ds_names:
 					click.echo(f'{name},{ds_name}')
+
+	def download_one(self, 
+									 manager_name: str, 
+									 ds_name: List[str],
+									 directory: Path, 
+									 overwrite: bool = False, 
+									 force: bool = False
+	) -> Path:
+		"""Download a single dataset."""
+		# Fetch data asynchronously
+		try:
+			self.fetch_one(manager_name)
+		except Exception as e:
+			log.exception('Error fetching %s: %s', manager_name, e)
+			errmsg = f'Error fetching {manager_name}: {e}'
+			raise ValueError(errmsg) from e
+		
+		manager = self.registry.get_manager(manager_name)
+		dataset_list = [manager[ds_name] for ds_name in ds_name]
+
+		for ds in dataset_list:
+			if not ds.download_link:
+				msg = f'Dataset {ds.name} does not have a download link.'
+				raise ValueError(msg)
+			
+			file_path = directory / f'{ds.name}.zip'
+		return file_path
+
+	def names(self) -> List[str]:
+		"""List all managers."""
+		return list(self.registry.get_all_managers().keys())
+
+	def __getitem__(self, name: str) -> DatasetManager:
+		"""Get a manager by name."""
+		try:
+			return self.registry.get_manager(name)
+		except StopIteration as se:
+			msg = f'Manager {name} not found in {self.__class__.__name__}.'
+			msg += f' Available managers: {", ".join(self.names())}'
+			raise ValueError(msg) from se

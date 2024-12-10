@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, Type
+from typing import Dict, Type, List
 
 import click
 from click import Group, MultiCommand
@@ -82,25 +82,37 @@ class DatasetMultiCommand(MultiCommand):
 			@click.option('--no-pretty', is_flag=True, help='Disable pretty printing')
 			@click.pass_context
 			def _list(ctx, force: bool = False, no_pretty: bool = False, verbose: int = 1, quiet: bool = False):
-				"""List items for this dataset."""
+				"""List ALL datasets for this data type.""" 
 				manager = UnifiedDataManager(force=force)
 				manager.list_one(name, pretty=not no_pretty)
 
 			@ds_group.command(name='table')
 			@set_log_verbosity()
+			@click.argument('ds_name', nargs=1, type=str, required=False, metavar='[NAME OF DATASET]')
 			@click.option('--force', is_flag=True, help='Force fetch new data')
 			@click.pass_context
-			def _table(ctx, force: bool = False, verbose: int = 1, quiet: bool = False):
-				"""Print a table of items for this dataset."""
+			def _table(ctx, force: bool = False, verbose: int = 1, quiet: bool = False, ds_name: str | None = None):
+				"""Print a table summary items for this dataset.
+				
+				If no dataset name is provided, prints a table of all datasets.
+				If a dataset name is provided, prints a table of the specified dataset.
+				""" 
 				manager = UnifiedDataManager(force=force)
-				manager.print_one_table(name)
+				manager.fetch_one(name)
+				ds_manager = manager[name]
+				if ds_name:
+					ds_manager[ds_name].print_summary(title=f'{ds_name} Summary')
+				else:
+					manager.print_one_table(name)
+					
+
 
 			@ds_group.command(name='download')
 			@click.option('--overwrite', '-o', is_flag=True, help='Overwrite existing file, if it exists.', default=False, show_default=True)
 			@click.option('--filename', '-f', help='Filename to save the file as. Defaults to the name of the dataset', default=None, type=str, required=False)
 			@click.option('--directory', '-d', help='Directory to save the file to', default=Path.cwd(), type=click.Path(exists=True, file_okay=False, dir_okay=True, writable=True, path_type=Path), required=True)
 			@click.argument(
-				'name',
+				'ds_name',
 				type=str,
 				required=True,
 				nargs=-1,
@@ -111,6 +123,7 @@ class DatasetMultiCommand(MultiCommand):
 			@click.pass_context
 			def _download(
 				ctx, 
+				ds_name: List[str],
 				directory: Path,  
 				force: bool = False, 
 				verbose: int = 1, 
@@ -120,6 +133,9 @@ class DatasetMultiCommand(MultiCommand):
 			):
 				"""Download a file for this dataset."""
 				click.echo(f'Downloading {name} to {directory}')
+				manager = UnifiedDataManager(force=force)
+				file_path = manager.download_one(name, ds_name, directory, overwrite, force)
+				click.echo(f'Downloaded {file_path}')
 			return ds_group
 		return None
 
@@ -131,8 +147,8 @@ class DatasetMultiCommand(MultiCommand):
 		)
 
 @click.command(cls=DatasetMultiCommand, context_settings=CONTEXT_SETTINGS, invoke_without_command=True)
-@click.help_option("-h", "--help", help="Show this message and exit.")
 @click.option('-r', '--refresh', is_flag=True, help='Fetch all datasets and hydrate the cache.', default=False, show_default=True)
+@click.help_option("-h", "--help", help="Show this message and exit.")
 @set_log_verbosity()
 @click.pass_context
 def cli(ctx, refresh: bool = False, verbose: int = 0, quiet: bool = False):
@@ -158,14 +174,18 @@ def cli(ctx, refresh: bool = False, verbose: int = 0, quiet: bool = False):
 
 	"""
 	ctx.ensure_object(dict)
+
+	# if user wants to refresh all datasets in the cache
 	if refresh:
 		manager = UnifiedDataManager(force=True)
 		manager.hydrate_cache()
 		manager.list_all()
 		return
-	click.echo(ctx.get_help())
 
-
+	# if no subcommand is provided, print help
+	elif ctx.invoked_subcommand is None:
+		click.echo(ctx.get_help())
+		return
 
 if __name__ == '__main__':
 	cli()

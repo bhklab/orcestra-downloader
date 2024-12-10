@@ -172,13 +172,15 @@ class BaseModel(AbstractRecord, ABC):
 		"""
 		return [datatype.name for datatype in self.available_datatypes]
 
-	def print_summary(self) -> None:
+	def print_summary(self, title: str | None = None) -> None:
 		"""
 		Print a summary of the dataset record.
 
 		This method uses Rich to display a well-formatted table of the record's attributes.
 		"""
-		table = Table(title=f'{self.__class__.__name__} Summary')
+		table = Table(
+			title=title if title else f'{self.__class__.__name__} Summary'
+		)
 
 		table.add_column('Field', style='bold cyan', no_wrap=True)
 		table.add_column('Value', style='magenta')
@@ -193,8 +195,16 @@ class BaseModel(AbstractRecord, ABC):
 		table.add_row('Dataset Name', self.dataset.name)
 		table.add_row('Dataset Version', self.dataset.version_info.version)
 		table.add_row(
+				'Dataset Type',
+				self.dataset.version_info.dataset_type.name if self.dataset.version_info.dataset_type else 'N/A',
+		)
+		table.add_row(
 			'Available Datatypes',
 			', '.join(self.datatypes) if self.datatypes else 'N/A',
+		)
+		table.add_row(
+			'Publications',
+			', '.join([f"{pub.citation} ({pub.link})" for pub in self.dataset.version_info.publication])
 		)
 
 		console = Console()
