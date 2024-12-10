@@ -6,6 +6,7 @@ from typing import Dict, Type
 import click
 from click import Group, MultiCommand
 
+
 from orcestradownloader.logging_config import set_log_verbosity
 from orcestradownloader.managers import REGISTRY, DatasetManager, UnifiedDataManager
 from orcestradownloader.models import ICBSet, PharmacoSet, RadioSet, ToxicoSet, XevaSet
@@ -75,11 +76,12 @@ class DatasetMultiCommand(MultiCommand):
 			@ds_group.command(name='list')
 			@set_log_verbosity()
 			@click.option('--force', is_flag=True, help='Force fetch new data')
+			@click.option('--no-pretty', is_flag=True, help='Disable pretty printing')
 			@click.pass_context
-			def _list(ctx, force: bool = False, verbose: int = 1, quiet: bool = False):
+			def _list(ctx, force: bool = False, no_pretty: bool = False, verbose: int = 1, quiet: bool = False):
 				"""List items for this dataset."""
 				manager = UnifiedDataManager(force=force)
-				manager.list_one(name)
+				manager.list_one(name, pretty=not no_pretty)
 
 			@ds_group.command(name='table')
 			@set_log_verbosity()
@@ -93,15 +95,36 @@ class DatasetMultiCommand(MultiCommand):
 			return ds_group
 		return None
 
+	def format_usage(self, ctx, formatter):
+		formatter.write_usage(
+			"orcestra",
+			"[DATASET_TYPE] [SUBCOMMAND] [ARGS]..."
+		)
+
 @click.command(cls=DatasetMultiCommand, context_settings=CONTEXT_SETTINGS)
+@click.help_option("-h", "--help", help="Show this message and exit.")
 @click.pass_context
 def cli(ctx, force: bool = False, verbose: int = 1, quiet: bool = False):
-	"""Manage all datasets dynamically.
+	"""
+	Interactive CLI for datasets on orcestra.ca
+	-------------------------------------------
 
 	\b
-	Subcommands:
-	- list
-	- table
+	Each dataset currently supports the following subcommands:
+	\b
+		list: List all items in the dataset
+		table: Print a table of items in the dataset
+
+	\b
+	Example:
+	\b
+		orcestra pharmacosets list
+		orcestra xevasets table --force
+	
+	To get help on a subcommand, use:
+
+		orcestra [dataset_type] [subcommand] --help
+
 	"""
 	ctx.ensure_object(dict)
 	ctx.obj['force'] = force

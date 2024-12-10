@@ -212,9 +212,12 @@ class UnifiedDataManager:
 		if pretty:
 			Console().print(f'[bold]{name}:[/]')
 			for ds_name in ds_names:
-				Console().print(f'  - {ds_name}')
+				Console().print(f'  - [green]{ds_name}[/]')
 		else:
-			Console().print(f'{name}: {ds_names}')
+			import click
+
+			for ds_name in ds_names:
+				click.echo(ds_name)
 
 	def list_all(self, pretty: bool = True) -> None:
 		"""List all datasets."""
@@ -231,7 +234,10 @@ class UnifiedDataManager:
 			for name, ds_names in ds_dict.items():
 				Console().print(f'[bold]{name}:[/]')
 				for ds_name in ds_names:
-					Console().print(f'  - {ds_name}')
+					Console().print(f'  - [green]{ds_name}[/]')
 		else:
 			for name, ds_names in ds_dict.items():
-				Console().print(f'{name}: {ds_names}')
+				import click
+
+				for ds_name in ds_names:
+					click.echo(f'{name},{ds_name}')
