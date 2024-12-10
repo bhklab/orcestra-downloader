@@ -106,13 +106,11 @@ jobs:
     # if pulling to main, deploy to PyPI
     if: github.ref == 'refs/heads/main'
 
-    env:
-      PIXI_ENV: "publish"
-
     strategy:
       matrix:
         os: [ubuntu-latest]
         python-version: ["3.12"]
+        env: ["publish"]
 
     # Set up operating system
     runs-on: ${{ matrix.os }}
@@ -137,16 +135,15 @@ jobs:
         env:
           RUNNER_DEBUG: true
         with:
-          environments: ${{ env.PIXI_ENV }}
+          environments: ${{ matrix.env }}
           pixi-version: v0.39.0
           cache: true
           locked: false
-          # cache-key: pixi-ENV_${{ env.PIXI_ENV }}-
 
       - name: Print Semver
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pixi run semver
+        run: pixi run --environment ${{ matrix.env }} semver
 
       - name: Run semantic-release
         env:
