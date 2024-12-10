@@ -1,7 +1,23 @@
 # CHANGELOG
 
 
+## v0.4.0 (2024-12-10)
+
+### Features
+
+- Add documentation build and publish workflows with mkdocs
+  ([`08b93e9`](https://github.com/bhklab/orcestra-downloader/commit/08b93e9130a4cf84f28ad5a971931b316b18e2d3))
+
+- Add mike dependency for documentation and update CI workflow for quality control
+  ([`dff42bd`](https://github.com/bhklab/orcestra-downloader/commit/dff42bd2d4e123b748697a4522ee6982870243bb))
+
+
 ## v0.3.0 (2024-12-10)
+
+### Chores
+
+- **sem-ver**: 0.3.0
+  ([`5aee00e`](https://github.com/bhklab/orcestra-downloader/commit/5aee00e9d8376a2f1d545c0c0ba8123d03dbb0d2))
 
 ### Features
 
