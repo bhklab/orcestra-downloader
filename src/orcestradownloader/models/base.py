@@ -178,9 +178,7 @@ class BaseModel(AbstractRecord, ABC):
 
 		This method uses Rich to display a well-formatted table of the record's attributes.
 		"""
-		table = Table(
-			title=title if title else f'{self.__class__.__name__} Summary'
-		)
+		table = Table(title=title if title else f'{self.__class__.__name__} Summary')
 
 		table.add_column('Field', style='bold cyan', no_wrap=True)
 		table.add_column('Value', style='magenta')
@@ -195,8 +193,10 @@ class BaseModel(AbstractRecord, ABC):
 		table.add_row('Dataset Name', self.dataset.name)
 		table.add_row('Dataset Version', self.dataset.version_info.version)
 		table.add_row(
-				'Dataset Type',
-				self.dataset.version_info.dataset_type.name if self.dataset.version_info.dataset_type else 'N/A',
+			'Dataset Type',
+			self.dataset.version_info.dataset_type.name
+			if self.dataset.version_info.dataset_type
+			else 'N/A',
 		)
 		table.add_row(
 			'Available Datatypes',
@@ -204,7 +204,12 @@ class BaseModel(AbstractRecord, ABC):
 		)
 		table.add_row(
 			'Publications',
-			', '.join([f"{pub.citation} ({pub.link})" for pub in self.dataset.version_info.publication])
+			', '.join(
+				[
+					f'{pub.citation} ({pub.link})'
+					for pub in self.dataset.version_info.publication
+				]
+			),
 		)
 
 		console = Console()

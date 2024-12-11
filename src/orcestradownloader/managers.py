@@ -140,7 +140,7 @@ class DatasetRegistry:
 
 	def get_all_managers(self) -> Dict[str, DatasetManager]:
 		return self.registry
-	
+
 	def __repr__(self) -> str:
 		return f'DatasetRegistry(registry={self.registry})'
 
@@ -273,13 +273,13 @@ class UnifiedDataManager:
 					click.echo(f'{name},{ds_name}')
 
 	def download_by_name(
-		self, 
-		manager_name: str, 
+		self,
+		manager_name: str,
 		ds_name: List[str],
-		directory: Path, 
-		overwrite: bool = False, 
+		directory: Path,
+		overwrite: bool = False,
 		force: bool = False,
-		timeout_seconds: int = 3600
+		timeout_seconds: int = 3600,
 	) -> List[Path]:
 		"""Download a single dataset."""
 		# Fetch data asynchronously
@@ -289,7 +289,7 @@ class UnifiedDataManager:
 			log.exception('Error fetching %s: %s', manager_name, e)
 			errmsg = f'Error fetching {manager_name}: {e}'
 			raise ValueError(errmsg) from e
-		
+
 		manager = self.registry.get_manager(manager_name)
 		dataset_list = [manager[ds_name] for ds_name in ds_name]
 
@@ -300,32 +300,36 @@ class UnifiedDataManager:
 				raise ValueError(msg)
 			file_path = directory / manager_name / f'{ds.name}.RDS'
 			if file_path.exists() and not overwrite:
-				Console().print(f'[bold red]File {file_path} already exists. Use --overwrite to overwrite.[/]')
+				Console().print(
+					f'[bold red]File {file_path} already exists. Use --overwrite to overwrite.[/]'
+				)
 				sys.exit(1)
 			file_path.parent.mkdir(parents=True, exist_ok=True)
 			file_paths[ds.name] = file_path
-		
+
 		async def download_all(progress: Progress) -> List[Path]:
-			return await asyncio.gather(*[
-				download_dataset(
-					ds.download_link, 
-					file_paths[ds.name], 
-					progress,
-					timeout_seconds=timeout_seconds
-				) 
-				for ds in dataset_list
-			])
-		
+			return await asyncio.gather(
+				*[
+					download_dataset(
+						ds.download_link,
+						file_paths[ds.name],
+						progress,
+						timeout_seconds=timeout_seconds,
+					)
+					for ds in dataset_list
+				]
+			)
+
 		with Progress() as progress:
 			return asyncio.run(download_all(progress))
 
 	def download_all(
-		self, 
+		self,
 		manager_name: str,
-		directory: Path, 
-		overwrite: bool = False, 
+		directory: Path,
+		overwrite: bool = False,
 		force: bool = False,
-		timeout_seconds: int = 3600
+		timeout_seconds: int = 3600,
 	) -> List[Path]:
 		"""Download all datasets for a specific manager."""
 		file_paths = []
@@ -335,7 +339,7 @@ class UnifiedDataManager:
 			log.exception('Error fetching %s: %s', manager_name, e)
 			errmsg = f'Error fetching {manager_name}: {e}'
 			raise ValueError(errmsg) from e
-		
+
 		manager = self.registry.get_manager(manager_name)
 		for ds in manager.datasets:
 			if not ds.download_link:
@@ -344,22 +348,26 @@ class UnifiedDataManager:
 				continue
 			file_path = directory / manager_name / f'{ds.name}.RDS'
 			if file_path.exists() and not overwrite:
-				Console().print(f'[bold red]File {file_path} already exists. Use --overwrite to overwrite.[/]')
+				Console().print(
+					f'[bold red]File {file_path} already exists. Use --overwrite to overwrite.[/]'
+				)
 				sys.exit(1)
 			file_path.parent.mkdir(parents=True, exist_ok=True)
 			file_paths.append(file_path)
-		
+
 		async def download_all_datasets(progress: Progress) -> List[Path]:
-			return await asyncio.gather(*[
-				download_dataset(
-					ds.download_link, 
-					file_path, 
-					progress,
-					timeout_seconds=timeout_seconds
-				) 
-				for ds, file_path in zip(manager.datasets, file_paths)
-			])
-			
+			return await asyncio.gather(
+				*[
+					download_dataset(
+						ds.download_link,
+						file_path,
+						progress,
+						timeout_seconds=timeout_seconds,
+					)
+					for ds, file_path in zip(manager.datasets, file_paths)
+				]
+			)
+
 		with Progress(
 			'[progress.description]{task.description}',
 			BarColumn(),
@@ -385,7 +393,10 @@ class UnifiedDataManager:
 			msg += f' Available managers: {", ".join(self.names())}'
 			raise ValueError(msg) from se
 
-async def download_dataset(download_link: str, file_path: Path, progress: Progress, timeout_seconds: int = 3600) -> Path:
+
+async def download_dataset(
+	download_link: str, file_path: Path, progress: Progress, timeout_seconds: int = 3600
+) -> Path:
 	"""Download a single dataset.
 
 	Called by the UnifiedDataManager.download_by_name method
@@ -395,14 +406,16 @@ async def download_dataset(download_link: str, file_path: Path, progress: Progre
 		try:
 			async with session.get(download_link) as response:
 				total = int(response.headers.get('content-length', 0))
-				task = progress.add_task(f"[cyan]Downloading {file_path.name}...", total=total)
+				task = progress.add_task(
+					f'[cyan]Downloading {file_path.name}...', total=total
+				)
 				with file_path.open('wb') as f:
 					async for chunk in response.content.iter_chunked(8192):
 						f.write(chunk)
 						progress.update(task, advance=len(chunk))
 		except asyncio.TimeoutError:
-			Console().print(f'[bold red]Timeout while downloading {file_path.name}. Please try again later.[/]')
+			Console().print(
+				f'[bold red]Timeout while downloading {file_path.name}. Please try again later.[/]'
+			)
 			raise
 	return file_path
-
-
