@@ -178,7 +178,7 @@ class DatasetMultiCommand(MultiCommand):
 	def format_usage(self, ctx, formatter):
 		"""Custom string for the Usage section of the help page."""
 		formatter.write_usage(
-			"orcestra",
+			self.name,
 			"[DATASET_TYPE] [SUBCOMMAND] [ARGS]..."
 		)
 
@@ -187,7 +187,7 @@ class DatasetMultiCommand(MultiCommand):
 		self.format_commands(ctx, formatter)
 		super(MultiCommand, self).format_options(ctx, formatter)
 
-@click.command(cls=DatasetMultiCommand, registry=REGISTRY, context_settings=CONTEXT_SETTINGS, invoke_without_command=True)
+@click.command(name='orcestra', cls=DatasetMultiCommand, registry=REGISTRY, context_settings=CONTEXT_SETTINGS, invoke_without_command=True)
 @click.option('-r', '--refresh', is_flag=True, help='Fetch all datasets and hydrate the cache.', default=False, show_default=True)
 @click.help_option("-h", "--help", help="Show this message and exit.")
 @set_log_verbosity()
