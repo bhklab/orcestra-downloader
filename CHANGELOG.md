@@ -1,7 +1,20 @@
 # CHANGELOG
 
 
+## v0.9.0 (2024-12-11)
+
+### Features
+
+- Update command name in CLI for improved clarity
+  ([`31f9d98`](https://github.com/bhklab/orcestra-downloader/commit/31f9d988cac74b2b25d16dafc9d3e611804f150b))
+
+
 ## v0.8.0 (2024-12-11)
+
+### Chores
+
+- **sem-ver**: 0.8.0
+  ([`9328bdb`](https://github.com/bhklab/orcestra-downloader/commit/9328bdb7d108a61d5876f0e3d9df1b5219d04c20))
 
 ### Features
 
