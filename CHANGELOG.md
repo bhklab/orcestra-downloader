@@ -1,12 +1,23 @@
 # CHANGELOG
 
 
+## v0.8.0 (2024-12-11)
+
+### Features
+
+- Update Python version support to include 3.10 and 3.11 in workflows and dependencies
+  ([`f3fa34b`](https://github.com/bhklab/orcestra-downloader/commit/f3fa34b45c8b076693fda67eba6d7305a0600509))
+
+
 ## v0.7.0 (2024-12-11)
 
 ### Chores
 
 - Format
   ([`27ada75`](https://github.com/bhklab/orcestra-downloader/commit/27ada758a5f7aa4c3194c296f68af87ba617fd34))
+
+- **sem-ver**: 0.7.0
+  ([`f7bbf46`](https://github.com/bhklab/orcestra-downloader/commit/f7bbf46de8a81cfcd7411a8633961973761c22f1))
 
 ### Features
 
