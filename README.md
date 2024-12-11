@@ -1,6 +1,6 @@
-# orcestra-downloader
+<div align="center">
 
-=============================
+# orcestra-downloader
 
 Simplified access to download data from orcestra.ca
 
@@ -8,27 +8,23 @@ Simplified access to download data from orcestra.ca
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json&style=flat-square)](https://github.com/astral-sh/ruff)
 [![Built with Material for MkDocs](https://img.shields.io/badge/mkdocs--material-gray?logo=materialformkdocs&style=flat-square)](https://github.com/squidfunk/mkdocs-material)
 
-
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/orcestra-downloader)](https://pypi.org/project/orcestra-downloader/)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/bhklab/orcestra-downloader?label=GitHub%20Release&style=flat-square)
 [![PyPI - Version](https://img.shields.io/pypi/v/orcestra-downloader)](https://pypi.org/project/orcestra-downloader/)
-[![PyPI - Format](https://img.shields.io/pypi/format/orcestra-downloader)](https://pypi.org/project/orcestra-downloader/)
 [![Downloads](https://static.pepy.tech/badge/orcestra-downloader)](https://pepy.tech/project/orcestra-downloader)
-
-<!-- ![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version?file=https://raw.githubusercontent.com/bhklab/orcestra-downloader/refs/heads/main/pyproject.toml) -->
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/bhklab/orcestra-downloader?style=flat-square)
 ![GitHub issues](https://img.shields.io/github/issues/bhklab/orcestra-downloader?style=flat-square)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/bhklab/orcestra-downloader?style=flat-square)
-
 ![GitHub contributors](https://img.shields.io/github/contributors/bhklab/orcestra-downloader?style=flat-square)
 ![GitHub stars](https://img.shields.io/github/stars/bhklab/orcestra-downloader?style=flat-square)
 ![GitHub forks](https://img.shields.io/github/forks/bhklab/orcestra-downloader?style=flat-square)
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/bhklab/orcestra-downloader?style=flat-square)
+</div>
 
 ## Installation
 
-To install the package, use pip:
+To install the package, use `pip`:
 
 ```console
 pip install orcestra-downloader
