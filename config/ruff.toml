@@ -12,7 +12,7 @@ fix = true
 extend-exclude = [
   "docs/*",     # Skip documentation files
   "tests/*",    # Skip test files
-  "src/orcestradownloader/cli/__main__.py",
+  "src/orcestradownloader/cli/cli.py",
 ]
 
 # Set the ruff cache directory

@@ -41,7 +41,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project.scripts]
-orcestra = "orcestradownloader.cli.__main__:cli"
+orcestra = "orcestradownloader.cli.cli:cli"
 
 [tool.hatch.version]
 # Path to file containing version string

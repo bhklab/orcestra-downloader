@@ -112,6 +112,7 @@ release = "semantic-release -c config/releaserc.toml version"
 
 [feature.build.dependencies]
 hatch = "*"
+rattler-build = ">=0.32.0,<0.33"
 
 [feature.build.tasks]
 # Builds the package and publishes it to the test.pypi.org repository
