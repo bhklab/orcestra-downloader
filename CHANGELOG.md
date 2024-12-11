@@ -1,7 +1,26 @@
 # CHANGELOG
 
 
+## v0.10.0 (2024-12-11)
+
+### Features
+
+- Add media task command for GIF updates in pixi.toml
+  ([`5a99552`](https://github.com/bhklab/orcestra-downloader/commit/5a995525b7a1abd1c448df3a7dcfac090aeb0bc3))
+
+- Add PyPI badges to README for versioning and download statistics
+  ([`b28bf5c`](https://github.com/bhklab/orcestra-downloader/commit/b28bf5ccb231f59142d13bb9a5c00351da2a6a8f))
+
+- Add usage examples and GIF to README, and update pixi.toml for media features
+  ([`c536650`](https://github.com/bhklab/orcestra-downloader/commit/c536650dba21200658fbd15fe4bd3587306d0725))
+
+
 ## v0.9.0 (2024-12-11)
+
+### Chores
+
+- **sem-ver**: 0.9.0
+  ([`953281f`](https://github.com/bhklab/orcestra-downloader/commit/953281f9b19a3a35fafb7b5ad7f833387608ae6d))
 
 ### Features
 
