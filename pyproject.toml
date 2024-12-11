@@ -16,13 +16,15 @@ maintainers = [{ name = "Jermiah Joseph", email = "jermiahjoseph98@gmail.com" }]
 classifiers = [
   "Development Status :: 1 - Planning",
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Operating System :: OS Independent",
   "License :: OSI Approved :: MIT License",
 ]
 
-requires-python = ">= 3.12"
+requires-python = ">= 3.10"
 dependencies = [
   "rich",
   "aiohttp>=3.11.4",

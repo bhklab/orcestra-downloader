@@ -11,6 +11,8 @@ dev = { features = ["dev", "test", "quality", "docs", "release", "build"], solve
 quality = { features = ["quality"], solve-group = "default" }
 docs = { features = ["docs"], solve-group = "default" }
 publish = { features = ["build", "release"], solve-group = "default" }
+py310 = { features = ["test", "py310"] }
+py311 = { features = ["test", "py311"] }
 py312 = { features = ["test", "py312"] }
 py313 = { features = ["test", "py313"] }
 
@@ -20,9 +22,13 @@ py313 = { features = ["test", "py313"] }
 orcestra-downloader = { path = ".", editable = true }
 
 [dependencies]
-python = ">=3.12"
+python = ">=3.10"
 
 ####################################### PYTHON VERSIONS ###########################################
+[feature.py310.dependencies]
+python = "3.10.*"
+[feature.py311.dependencies]
+python = "3.11.*"
 [feature.py312.dependencies]
 python = "3.12.*"
 [feature.py313.dependencies]
