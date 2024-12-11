@@ -112,7 +112,8 @@ inputs = ["docs"]
 ttyd = "*"
 vhs = "*"
 
-
+[feature.media.tasks.update-gif]
+cmd = "vhs tapes/orcestra-downloader.tape"
 
 #################################### RELEASE & BUILD ###############################################
 [feature.release.dependencies]
