@@ -1,7 +1,26 @@
 # CHANGELOG
 
 
+## v0.7.0 (2024-12-11)
+
+### Chores
+
+- Format
+  ([`27ada75`](https://github.com/bhklab/orcestra-downloader/commit/27ada758a5f7aa4c3194c296f68af87ba617fd34))
+
+### Features
+
+- Add support for 'radiomicsets' dataset and enhance dataset download functionality with timeout
+  handling
+  ([`e5eb513`](https://github.com/bhklab/orcestra-downloader/commit/e5eb513680e62aff652de9da040848d055aa2c86))
+
+
 ## v0.6.0 (2024-12-10)
+
+### Chores
+
+- **sem-ver**: 0.6.0
+  ([`8024813`](https://github.com/bhklab/orcestra-downloader/commit/8024813a1d730e9d1647bd896014e11b6adacab3))
 
 ### Features
 
