@@ -19,3 +19,35 @@ Simplified access to download data from orcestra.ca
 ![GitHub forks](https://img.shields.io/github/forks/bhklab/orcestra-downloader?style=flat-square)
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/bhklab/orcestra-downloader?style=flat-square)
+
+## Installation
+
+To install the package, use pip:
+
+```console
+pip install orcestra-downloader
+```
+
+To install using `pixi`:
+
+```console
+pixi add --pypi orcestra-downloader
+```
+
+## Usage
+
+### Examples
+
+![orcestra-gif](./tapes/orcestra.gif)
+
+### Refreshing Cache
+
+`orcestra-downloader` uses a cache to store downloaded data.
+This should be located at ~/.cache/orcestra-downloader.
+
+By default, the tool will only update cache when used 7 days after the last update.
+To refresh the cache, use the `--refresh` flag.
+
+```console
+orcestra --refresh
+```
