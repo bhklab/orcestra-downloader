@@ -1,7 +1,32 @@
 # CHANGELOG
 
 
+## v0.11.0 (2024-12-13)
+
+### Chores
+
+- Update readme
+  ([`44d2f59`](https://github.com/bhklab/orcestra-downloader/commit/44d2f590d26840ac001e04c3cc7cec7b32bbef11))
+
+### Features
+
+- Improve CLI help text and dataset naming conventions
+  ([#2](https://github.com/bhklab/orcestra-downloader/pull/2),
+  [`4ee9b57`](https://github.com/bhklab/orcestra-downloader/commit/4ee9b57649a9f53f7cbe5dbf2e9b1777f691c893))
+
+* feat: improve help + table naming
+
+* enhancement: enhance CLI help text and add epilog for issue reporting
+
+closes #1
+
+
 ## v0.10.0 (2024-12-11)
+
+### Chores
+
+- **sem-ver**: 0.10.0
+  ([`6e2a6ba`](https://github.com/bhklab/orcestra-downloader/commit/6e2a6ba5a43ddc2e7779941f7a8d0635cce4bbb7))
 
 ### Features
 
