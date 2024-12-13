@@ -91,7 +91,7 @@ class DatasetMultiCommand(MultiCommand):
 				type=str,
 				required=True,
 				nargs=-1,
-				metavar='[NAME OF DATASET]'
+				metavar='[ORCESTRA DATASET NAME]'
 			)
 			@click.option('--force', is_flag=True, help='Force fetch new data from the API. Useful if the data has been updated on the API.', default=False, show_default=True)
 			@set_log_verbosity()

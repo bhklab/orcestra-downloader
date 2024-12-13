@@ -183,14 +183,14 @@ class BaseModel(AbstractRecord, ABC):
 		table.add_column('Field', style='bold cyan', no_wrap=True)
 		table.add_column('Value', style='magenta')
 
-		table.add_row('Name', self.name)
+		table.add_row('Orcestra Dataset Name', self.name)
 		table.add_row('DOI', self.doi)
 		table.add_row(
 			'Date Created',
 			self.date_created.isoformat() if self.date_created else 'N/A',
 		)
 		table.add_row('Download Link', self.download_link)
-		table.add_row('Dataset Name', self.dataset.name)
+		table.add_row('Original Dataset Name', self.dataset.name)
 		table.add_row('Dataset Version', self.dataset.version_info.version)
 		table.add_row(
 			'Dataset Type',
