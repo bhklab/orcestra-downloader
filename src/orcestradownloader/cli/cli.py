@@ -91,7 +91,7 @@ class DatasetMultiCommand(MultiCommand):
 				type=str,
 				required=True,
 				nargs=-1,
-				metavar='[NAME OF DATASET]'
+				metavar='[ORCESTRA DATASET NAME]'
 			)
 			@click.option('--force', is_flag=True, help='Force fetch new data from the API. Useful if the data has been updated on the API.', default=False, show_default=True)
 			@set_log_verbosity()
@@ -187,7 +187,17 @@ class DatasetMultiCommand(MultiCommand):
 		self.format_commands(ctx, formatter)
 		super(MultiCommand, self).format_options(ctx, formatter)
 
-@click.command(name='orcestra', cls=DatasetMultiCommand, registry=REGISTRY, context_settings=CONTEXT_SETTINGS, invoke_without_command=True)
+
+################################################################################
+# Main CLI
+################################################################################
+
+EPILOG = """
+If you encounter any issues or have any questions, please raise an issue on the GitHub repository:
+https://github.com/bhklab/orcestra-downloader
+"""
+
+@click.command(name='orcestra', cls=DatasetMultiCommand, registry=REGISTRY, context_settings=CONTEXT_SETTINGS, invoke_without_command=True, epilog=EPILOG)
 @click.option('-r', '--refresh', is_flag=True, help='Fetch all datasets and hydrate the cache.', default=False, show_default=True)
 @click.help_option("-h", "--help", help="Show this message and exit.")
 @set_log_verbosity()
@@ -197,11 +207,19 @@ def cli(ctx, refresh: bool = False, verbose: int = 0, quiet: bool = False):
 	Interactive CLI for datasets on orcestra.ca
 	-------------------------------------------
 
+	Welcome to the Orcestra CLI! 
+
+	This program provides an interface for the orcestra.ca API,
+	providing a convenient way to interact with the datasets available
+	on the platform.
+
 	\b
 	Each dataset currently supports the following subcommands:
 	\b
 		list: List all items in the dataset
 		table: Print a table of items in the dataset
+		download: Download a file for a dataset
+		download-all: Download all files for a dataset
 
 	\b
 	Example:
@@ -210,12 +228,12 @@ def cli(ctx, refresh: bool = False, verbose: int = 0, quiet: bool = False):
 		$ orcestra radiosets list
 
 	\b
-		print a table of all xevasets while refreshing the cache
+		print a table of all xevasets after refreshing the cache
 		$ orcestra xevasets table --force
 
 	\b
 		print a table of a specific dataset with more details
-		$ orcestra pharmacosets table 'GDSC_2020(v2-8.2)'
+		$ orcestra pharmacosets table GDSC_2020(v2-8.2)
 	
 	To get help on a subcommand, use:
 

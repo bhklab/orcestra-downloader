@@ -108,7 +108,7 @@ class DatasetManager(Generic[T]):
 	def print(self, title: str, row_generator: Callable) -> None:
 		"""Print datasets in a formatted table."""
 		printer = TablePrinter(
-			title, headers=['Name', 'Dataset Name', 'Date Created', 'Datatypes']
+			title, headers=['Orcestra Dataset Name', 'Original Dataset Name', 'Date Created', 'Datatypes']
 		)
 		printer.print_table(self.datasets, row_generator)
 
