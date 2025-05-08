@@ -332,7 +332,6 @@ class UnifiedDataManager:
 		timeout_seconds: int = 3600,
 	) -> List[Path]:
 		"""Download all datasets for a specific manager."""
-		file_paths = []
 		try:
 			self.fetch_one(manager_name)
 		except Exception as e:
@@ -340,6 +339,8 @@ class UnifiedDataManager:
 			errmsg = f'Error fetching {manager_name}: {e}'
 			raise ValueError(errmsg) from e
 
+		file_paths = []
+		download_links = []
 		manager = self.registry.get_manager(manager_name)
 		for ds in manager.datasets:
 			if not ds.download_link:
@@ -354,17 +355,18 @@ class UnifiedDataManager:
 				sys.exit(1)
 			file_path.parent.mkdir(parents=True, exist_ok=True)
 			file_paths.append(file_path)
+			download_links.append(ds.download_link)
 
 		async def download_all_datasets(progress: Progress) -> List[Path]:
 			return await asyncio.gather(
 				*[
 					download_dataset(
-						ds.download_link,
+						download_link,
 						file_path,
 						progress,
 						timeout_seconds=timeout_seconds,
 					)
-					for ds, file_path in zip(manager.datasets, file_paths)
+					for download_link, file_path in zip(download_links, file_paths, strict=True)
 				]
 			)
 
