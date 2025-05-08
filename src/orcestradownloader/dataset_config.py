@@ -8,6 +8,7 @@ from orcestradownloader.models import (
 	RadioSet,
 	ToxicoSet,
 	XevaSet,
+	ClinicalGenomics,
 )
 
 
@@ -52,6 +53,6 @@ DATASET_CONFIG: Dict[str, DatasetConfig] = {
     'clinicalgenomics': DatasetConfig(
 		url='https://orcestra.ca/api/clinicalgenomics/available',
 		cache_file='radiomicsets.json',
-		dataset_type=RadiomicSet,
+		dataset_type=ClinicalGenomics,
 	),
 }
