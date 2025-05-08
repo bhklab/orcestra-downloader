@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.13.0 (2025-05-08)
+
+### Chores
+
+- Update lockfile
+  ([`d967027`](https://github.com/bhklab/orcestra-downloader/commit/d9670272a64d7909eb463bd2d53d1ef06514b4ac))
+
+### Features
+
+- Add duplicate cli for uvx
+  ([`105a767`](https://github.com/bhklab/orcestra-downloader/commit/105a76733c04a47acefc1e6b3f7e0f6a96faf8eb))
+
+
 ## v0.12.0 (2025-05-08)
 
 ### Features
