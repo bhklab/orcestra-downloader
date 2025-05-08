@@ -1,6 +1,26 @@
 # CHANGELOG
 
 
+## v0.11.1 (2025-05-08)
+
+### Bug Fixes
+
+- Bug that still tried to download dataset if it had a missing link
+  ([#6](https://github.com/bhklab/orcestra-downloader/pull/6),
+  [`aef881f`](https://github.com/bhklab/orcestra-downloader/commit/aef881f35fe68e9bd5382c824e118ac4c2a7ece9))
+
+* fix: Correct dependency key formatting in pixi.toml
+
+* dont format
+
+### Chores
+
+- Update pixi lockfile ([#3](https://github.com/bhklab/orcestra-downloader/pull/3),
+  [`fddf528`](https://github.com/bhklab/orcestra-downloader/commit/fddf5280d237b26996bf60ed137f0763fd1bc0c2))
+
+Co-authored-by: jjjermiah <44614774+jjjermiah@users.noreply.github.com>
+
+
 ## v0.11.0 (2024-12-13)
 
 ### Chores
@@ -23,11 +43,6 @@ closes #1
 
 ## v0.10.0 (2024-12-11)
 
-### Chores
-
-- **sem-ver**: 0.10.0
-  ([`6e2a6ba`](https://github.com/bhklab/orcestra-downloader/commit/6e2a6ba5a43ddc2e7779941f7a8d0635cce4bbb7))
-
 ### Features
 
 - Add media task command for GIF updates in pixi.toml
@@ -42,11 +57,6 @@ closes #1
 
 ## v0.9.0 (2024-12-11)
 
-### Chores
-
-- **sem-ver**: 0.9.0
-  ([`953281f`](https://github.com/bhklab/orcestra-downloader/commit/953281f9b19a3a35fafb7b5ad7f833387608ae6d))
-
 ### Features
 
 - Update command name in CLI for improved clarity
@@ -54,11 +64,6 @@ closes #1
 
 
 ## v0.8.0 (2024-12-11)
-
-### Chores
-
-- **sem-ver**: 0.8.0
-  ([`9328bdb`](https://github.com/bhklab/orcestra-downloader/commit/9328bdb7d108a61d5876f0e3d9df1b5219d04c20))
 
 ### Features
 
@@ -73,9 +78,6 @@ closes #1
 - Format
   ([`27ada75`](https://github.com/bhklab/orcestra-downloader/commit/27ada758a5f7aa4c3194c296f68af87ba617fd34))
 
-- **sem-ver**: 0.7.0
-  ([`f7bbf46`](https://github.com/bhklab/orcestra-downloader/commit/f7bbf46de8a81cfcd7411a8633961973761c22f1))
-
 ### Features
 
 - Add support for 'radiomicsets' dataset and enhance dataset download functionality with timeout
@@ -84,11 +86,6 @@ closes #1
 
 
 ## v0.6.0 (2024-12-10)
-
-### Chores
-
-- **sem-ver**: 0.6.0
-  ([`8024813`](https://github.com/bhklab/orcestra-downloader/commit/8024813a1d730e9d1647bd896014e11b6adacab3))
 
 ### Features
 
@@ -100,11 +97,6 @@ closes #1
 
 
 ## v0.5.0 (2024-12-10)
-
-### Chores
-
-- **sem-ver**: 0.5.0
-  ([`1b5a11b`](https://github.com/bhklab/orcestra-downloader/commit/1b5a11bf8f8223bf8942697d7cde427a6baa5b4a))
 
 ### Features
 
@@ -120,11 +112,6 @@ closes #1
 
 ## v0.4.0 (2024-12-10)
 
-### Chores
-
-- **sem-ver**: 0.4.0
-  ([`0e90577`](https://github.com/bhklab/orcestra-downloader/commit/0e90577522122dafa6bb1c12499ffcb1bccb84e3))
-
 ### Features
 
 - Add documentation build and publish workflows with mkdocs
@@ -135,11 +122,6 @@ closes #1
 
 
 ## v0.3.0 (2024-12-10)
-
-### Chores
-
-- **sem-ver**: 0.3.0
-  ([`5aee00e`](https://github.com/bhklab/orcestra-downloader/commit/5aee00e9d8376a2f1d545c0c0ba8123d03dbb0d2))
 
 ### Features
 
@@ -154,11 +136,6 @@ closes #1
 - Update CI workflow to use matrix for Python version and environment variable in Publish-To-PyPi
   job
   ([`593cb33`](https://github.com/bhklab/orcestra-downloader/commit/593cb3339b9617e36dd2b3198b82f0035c4c9f55))
-
-### Chores
-
-- **sem-ver**: 0.2.1
-  ([`b2a0ef1`](https://github.com/bhklab/orcestra-downloader/commit/b2a0ef1d1b0f095baffa2e81a11a235c117f4125))
 
 
 ## v0.2.0 (2024-12-10)
@@ -191,11 +168,6 @@ closes #1
 
 - Update sha256 checksum for orcestra-downloader in pixi.lock
   ([`f259f13`](https://github.com/bhklab/orcestra-downloader/commit/f259f136efe078444d2e7d245517183955021761))
-
-### Chores
-
-- **sem-ver**: 0.2.0
-  ([`fdbf92e`](https://github.com/bhklab/orcestra-downloader/commit/fdbf92e069b12e4826647f059404ce28410210a9))
 
 ### Features
 
