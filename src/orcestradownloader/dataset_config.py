@@ -49,4 +49,9 @@ DATASET_CONFIG: Dict[str, DatasetConfig] = {
 		cache_file='radiomicsets.json',
 		dataset_type=RadiomicSet,
 	),
+    'clinicalgenomics': DatasetConfig(
+		url='https://orcestra.ca/api/clinicalgenomics/available',
+		cache_file='radiomicsets.json',
+		dataset_type=RadiomicSet,
+	),
 }
