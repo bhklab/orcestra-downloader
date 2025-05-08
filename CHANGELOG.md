@@ -1,6 +1,24 @@
 # CHANGELOG
 
 
+## v0.12.0 (2025-05-08)
+
+### Features
+
+- Add clinical genomics datasets ([#7](https://github.com/bhklab/orcestra-downloader/pull/7),
+  [`fbc7617`](https://github.com/bhklab/orcestra-downloader/commit/fbc76178a83c51ed7e046fa3f200f7446be975b9))
+
+* feat: Add clinical genomics dataset configuration
+
+* chore: update lockfile
+
+* feat: Add ClinicalGenomics model and update dataset configuration
+
+* chore(sem-ver): bump version to 0.11.2 and update sha256
+
+* style: Format dataset configuration for consistency
+
+
 ## v0.11.2 (2025-05-08)
 
 
