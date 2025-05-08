@@ -1,6 +1,9 @@
 # CHANGELOG
 
 
+## v0.11.2 (2025-05-08)
+
+
 ## v0.11.1 (2025-05-08)
 
 ### Bug Fixes
@@ -12,6 +15,9 @@
 * fix: Correct dependency key formatting in pixi.toml
 
 * dont format
+
+- Correct dependency key formatting in pixi.toml
+  ([`ed610ec`](https://github.com/bhklab/orcestra-downloader/commit/ed610ecc84f889b8a19ca66cbb8b2d578a39d8f9))
 
 ### Chores
 
