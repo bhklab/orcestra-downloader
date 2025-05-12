@@ -1,6 +1,31 @@
 # CHANGELOG
 
 
+## v0.14.0 (2025-05-12)
+
+### Documentation
+
+- Enhance installation instructions and remove Python API usage section
+  ([`a9d4345`](https://github.com/bhklab/orcestra-downloader/commit/a9d4345360ae65114a8a24eb4daf23b9f6e7192e))
+
+- Update command references to use 'orcestra-downloader' instead of 'orcestra'
+  ([`b619f3e`](https://github.com/bhklab/orcestra-downloader/commit/b619f3ef94f573313acde4f151101238a5713d6b))
+
+- Update readme
+  ([`49c2e4f`](https://github.com/bhklab/orcestra-downloader/commit/49c2e4fabd3b89e2fed6e743f7e4d6bfed6e2dd0))
+
+### Features
+
+- Update orcestra-downloader commands and dependencies
+  ([`93e473f`](https://github.com/bhklab/orcestra-downloader/commit/93e473f82edffeaf07850b7409ba813a8a8f04ac))
+
+- Modified the `pixi.toml` file to add ffmpeg as a dependency and updated the description for the
+  GIF update task. - Changed commands in the `orcestra-downloader.tape` to use "orcestra-downloader"
+  instead of "orcestra" for consistency and clarity, with increased sleep durations for better
+  execution timing. - Updated the binary `orcestra.gif` file to reflect the changes made in the tape
+  commands.
+
+
 ## v0.13.0 (2025-05-08)
 
 ### Chores
