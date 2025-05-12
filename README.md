@@ -120,16 +120,16 @@ The `orcestra-downloader` provides a convenient command-line interface to intera
 
 ```bash
 # List all items in a dataset
-orcestra [dataset_type] list
+orcestra-downloader [dataset_type] list
 
 # Print a table of items in a dataset
-orcestra [dataset_type] table [DATASET_NAME]
+orcestra-downloader [dataset_type] table [DATASET_NAME]
 
 # Download a file for a dataset
-orcestra [dataset_type] download [DATASET_NAME]
+orcestra-downloader [dataset_type] download [DATASET_NAME]
 
 # Download all files for a dataset
-orcestra [dataset_type] download-all
+orcestra-downloader [dataset_type] download-all
 ```
 
 </td>
@@ -151,13 +151,13 @@ orcestra [dataset_type] download-all
 
 ```console
 # List all radiosets
-orcestra radiosets list
+orcestra-downloader radiosets list
 
 # Print a table of all xevasets after refreshing the cache
-orcestra xevasets table --force
+orcestra-downloader xevasets table --force
 
 # Print a table of a specific dataset with more details
-orcestra pharmacosets table GDSC_2020(v2-8.2)
+orcestra-downloader pharmacosets table GDSC_2020(v2-8.2)
 ```
 
 </td>
@@ -192,7 +192,7 @@ By default, the tool will only update cache when used 7 days after the last upda
 To refresh the cache, use the `--refresh` flag.
 
 ```console
-orcestra --refresh
+orcestra-downloader --refresh
 ```
 
 </td>
@@ -214,19 +214,19 @@ orcestra --refresh
 
 ```console
 # Download a specific pharmacoset
-orcestra pharmacosets download 'GDSC_2020(v2-8.2)'
+orcestra-downloader pharmacosets download 'GDSC_2020(v2-8.2)'
 
 # Download multiple datasets at once
-orcestra radiomicsets download HNSCC_Features RADCURE_Features
+orcestra-downloader radiomicsets download HNSCC_Features RADCURE_Features
 
 # Specify a custom download directory
-orcestra toxicosets download 'DrugMatrix Rat' --directory ./my-data-folder
+orcestra-downloader toxicosets download 'DrugMatrix Rat' --directory ./my-data-folder
 
 # Download all datasets of a specific type (with progress bar)
-orcestra xevasets download-all
+orcestra-downloader xevasets download-all
 
 # Force overwrite of existing files
-orcestra icbsets download-all --overwrite
+orcestra-downloader icbsets download-all --overwrite
 ```
 
 </td>
