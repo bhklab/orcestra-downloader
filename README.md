@@ -24,16 +24,54 @@ Simplified access to download data from orcestra.ca
 
 ## Installation
 
+### 1. Recommended CLI access
+
+The recommended way to use `orcestra-downloader` is through its CLI tool, which
+can be easily used with [uv](https://astral.sh/uv)
+
+**Install uv with pixi:**
+
+```console
+pixi global install uv
+```
+
+**Use uv to run the CLI:**
+
+```console
+uvx orcestra-downloader --help
+```
+
+<details>
+<summary>:eyes: or without globally installing</summary>
+
+```console
+pixi exec --spec uv uvx orcestra-downloader --help 
+```
+</details>
+
+### 2. Install into `pixi` project
+
+If you are using [pixi](https://pixi.sh), you can install `orcestra-downloader` into your project.
+
+```console
+pixi add --pypi orcestra-downloader
+```
+
+### 3. Install with `pip`
+
+If you have a [python virtual environment](https://docs.python.org/3/tutorial/venv.html) set up,
+you can install `orcestra-downloader` directly using `pip` or `python -m pip`.
+
 To install the package, use `pip`:
 
 ```console
 pip install orcestra-downloader
 ```
 
-To install using `pixi`:
+or 
 
 ```console
-pixi add --pypi orcestra-downloader
+python -m pip install orcestra-downloader
 ```
 
 ## Usage
@@ -143,7 +181,7 @@ orcestra pharmacosets table GDSC_2020(v2-8.2)
 <td>
 
 :bulb: `orcestra-downloader` uses a cache to store downloaded data.
-This should be located at ~/.cache/orcestra-downloader.
+This should be located at `~/.cache/orcestra-downloader`.
 
 </td>
 </tr>
@@ -182,7 +220,7 @@ orcestra pharmacosets download 'GDSC_2020(v2-8.2)'
 orcestra radiomicsets download HNSCC_Features RADCURE_Features
 
 # Specify a custom download directory
-orcestra toxicosets download TOXICOSET1 --directory ./my-data-folder
+orcestra toxicosets download 'DrugMatrix Rat' --directory ./my-data-folder
 
 # Download all datasets of a specific type (with progress bar)
 orcestra xevasets download-all
@@ -259,48 +297,6 @@ Options:
 ```
 
 </details>
-</td>
-</tr>
-</table>
-
-## Python API Usage
-
-<table>
-<tr>
-<td>
-
-:snake: You can also use orcestra-downloader as a Python library:
-
-</td>
-</tr>
-<tr>
-<td>
-
-```python
-from orcestradownloader.managers import UnifiedDataManager, REGISTRY
-from pathlib import Path
-
-# Initialize the manager
-manager = UnifiedDataManager(REGISTRY)
-
-# List available pharmacosets
-manager.list_one("pharmacosets")
-
-# Download a specific dataset
-download_dir = Path("./my_data")
-download_dir.mkdir(exist_ok=True)
-file_path = manager.download_by_name(
-    "pharmacosets", 
-    ["GDSC_2020(v2-8.2)"], 
-    download_dir
-)
-print(f"Downloaded to: {file_path}")
-
-# Get information about a specific dataset
-dataset = manager["pharmacosets"]["GDSC_2020(v2-8.2)"]
-print(f"Dataset info: {dataset}")
-```
-
 </td>
 </tr>
 </table>
