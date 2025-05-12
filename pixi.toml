@@ -111,9 +111,11 @@ inputs = ["docs"]
 [feature.media.target.unix.dependencies]
 ttyd = "*"
 vhs = "*"
+ffmpeg = "*"
 
 [feature.media.tasks.update-gif]
 cmd = "vhs tapes/orcestra-downloader.tape"
+description = "Update the orcestra-downloader.gif file"
 
 #################################### RELEASE & BUILD ###############################################
 [feature.release.dependencies]
