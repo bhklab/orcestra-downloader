@@ -38,14 +38,117 @@ pixi add --pypi orcestra-downloader
 
 ## Usage
 
+The `orcestra-downloader` provides a convenient command-line interface to interact with the [orcestra.ca](https://orcestra.ca) API. The CLI allows you to list, view, and download various datasets easily.
+
+### Available Dataset Types
+
+<table>
+<tr>
+<td>
+
+:microscope: Seven different dataset types are available through orcestra.ca:
+
+</td>
+</tr>
+<tr>
+<td>
+
+| Dataset Type | Description |
+|-------------|-------------|
+| `pharmacosets` | Pharmacological screening datasets |
+| `icbsets` | Immune checkpoint blockade datasets |
+| `radiosets` | Radiotherapy response datasets |
+| `xevasets` | Xenograft-derived datasets |
+| `toxicosets` | Toxicological screening datasets |
+| `radiomicsets` | Radiomics datasets |
+| `clinicalgenomics` | Clinical genomics datasets |
+
+</td>
+</tr>
+</table>
+
+### Basic Commands
+
+<table>
+<tr>
+<td>
+
+:technologist: Each dataset type supports these common commands:
+
+</td>
+</tr>
+<tr>
+<td>
+
+```bash
+# List all items in a dataset
+orcestra [dataset_type] list
+
+# Print a table of items in a dataset
+orcestra [dataset_type] table [DATASET_NAME]
+
+# Download a file for a dataset
+orcestra [dataset_type] download [DATASET_NAME]
+
+# Download all files for a dataset
+orcestra [dataset_type] download-all
+```
+
+</td>
+</tr>
+</table>
+
 ### Examples
+
+<table>
+<tr>
+<td>
+
+:clipboard: Basic listing and table commands
+
+</td>
+</tr>
+<tr>
+<td>
+
+```console
+# List all radiosets
+orcestra radiosets list
+
+# Print a table of all xevasets after refreshing the cache
+orcestra xevasets table --force
+
+# Print a table of a specific dataset with more details
+orcestra pharmacosets table GDSC_2020(v2-8.2)
+```
+
+</td>
+</tr>
+<tr>
+<td>
+<details>
+<summary>:eyes: Command Demo</summary>
 
 ![orcestra-gif](./tapes/orcestra.gif)
 
+</details>
+</td>
+</tr>
+</table>
+
 ### Refreshing Cache
 
-`orcestra-downloader` uses a cache to store downloaded data.
+<table>
+<tr>
+<td>
+
+:bulb: `orcestra-downloader` uses a cache to store downloaded data.
 This should be located at ~/.cache/orcestra-downloader.
+
+</td>
+</tr>
+<tr>
+<td>
 
 By default, the tool will only update cache when used 7 days after the last update.
 To refresh the cache, use the `--refresh` flag.
@@ -53,3 +156,180 @@ To refresh the cache, use the `--refresh` flag.
 ```console
 orcestra --refresh
 ```
+
+</td>
+</tr>
+</table>
+
+### Downloading Datasets
+
+<table>
+<tr>
+<td>
+
+:arrow_down: Download specific datasets or entire collections:
+
+</td>
+</tr>
+<tr>
+<td>
+
+```console
+# Download a specific pharmacoset
+orcestra pharmacosets download 'GDSC_2020(v2-8.2)'
+
+# Download multiple datasets at once
+orcestra radiomicsets download HNSCC_Features RADCURE_Features
+
+# Specify a custom download directory
+orcestra toxicosets download TOXICOSET1 --directory ./my-data-folder
+
+# Download all datasets of a specific type (with progress bar)
+orcestra xevasets download-all
+
+# Force overwrite of existing files
+orcestra icbsets download-all --overwrite
+```
+
+</td>
+</tr>
+</table>
+
+### Command Reference
+
+<table>
+<tr>
+<td>
+
+:gear: Global options available for all commands:
+
+</td>
+</tr>
+<tr>
+<td>
+
+```
+Options:
+  -r, --refresh  Fetch all datasets and hydrate the cache.
+  -h, --help     Show this message and exit.
+  -q, --quiet    Suppress all logging except errors.
+  -v, --verbose  Increase verbosity of logging (0-3: ERROR, WARNING, INFO, DEBUG).
+```
+
+</td>
+</tr>
+<tr>
+<td>
+<details>
+<summary>:keyboard: Dataset-specific command options</summary>
+
+For the `list` command:
+```
+Options:
+  --force      Force fetch new data.
+  --no-pretty  Disable pretty printing.
+```
+
+For the `table` command:
+```
+Arguments:
+  [NAME OF DATASET]  Optional dataset name for detailed information.
+
+Options:
+  --force      Force fetch new data.
+```
+
+For the `download` command:
+```
+Arguments:
+  [ORCESTRA DATASET NAME]  Required dataset name(s) to download.
+
+Options:
+  -o, --overwrite          Overwrite existing file if it exists.
+  -d, --directory PATH     Directory to save the file to.
+  --force                  Force fetch new data from the API.
+```
+
+For the `download-all` command:
+```
+Options:
+  -o, --overwrite          Overwrite existing files if they exist.
+  -d, --directory PATH     Directory to save the files to.
+  --force                  Force fetch new data from the API.
+```
+
+</details>
+</td>
+</tr>
+</table>
+
+## Python API Usage
+
+<table>
+<tr>
+<td>
+
+:snake: You can also use orcestra-downloader as a Python library:
+
+</td>
+</tr>
+<tr>
+<td>
+
+```python
+from orcestradownloader.managers import UnifiedDataManager, REGISTRY
+from pathlib import Path
+
+# Initialize the manager
+manager = UnifiedDataManager(REGISTRY)
+
+# List available pharmacosets
+manager.list_one("pharmacosets")
+
+# Download a specific dataset
+download_dir = Path("./my_data")
+download_dir.mkdir(exist_ok=True)
+file_path = manager.download_by_name(
+    "pharmacosets", 
+    ["GDSC_2020(v2-8.2)"], 
+    download_dir
+)
+print(f"Downloaded to: {file_path}")
+
+# Get information about a specific dataset
+dataset = manager["pharmacosets"]["GDSC_2020(v2-8.2)"]
+print(f"Dataset info: {dataset}")
+```
+
+</td>
+</tr>
+</table>
+
+## Troubleshooting
+
+<table>
+<tr>
+<td>
+
+:question: Common issues and solutions:
+
+</td>
+</tr>
+<tr>
+<td>
+
+- **Cache issues**: If you're getting outdated information, try using the `--refresh` flag or `--force` option.
+- **Download errors**: Check your internet connection and make sure the orcestra.ca API is accessible.
+- **Permission errors**: Ensure you have write permissions to the download directory.
+- **Dataset not found**: Make sure the dataset name is correct and exists on orcestra.ca.
+
+</td>
+</tr>
+</table>
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+If you encounter any issues or have questions, please open an issue on the GitHub repository:
+[https://github.com/bhklab/orcestra-downloader/issues](https://github.com/bhklab/orcestra-downloader/issues)
