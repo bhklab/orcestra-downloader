@@ -27,34 +27,58 @@ Simplified access to download data from orcestra.ca
 ### 1. Recommended CLI access
 
 The recommended way to use `orcestra-downloader` is through its CLI tool, which
-can be easily used with [uv](https://astral.sh/uv)
+can be easily done without ever installing it on your system.
+You can run the CLI directly using `pixi` or `uvx` commands.
 
-**Install uv with pixi:**
+#### [pixi exec](https://pixi.sh/latest/reference/cli/pixi/exec/#pixi-exec) **via [conda](https://anaconda.org/conda-forge/orcestra-downloader)**
+
+<table>
+<tr>
+<td>
 
 ```console
-pixi global install uv
-```
-
-**Use uv to run the CLI:**
-
-```console
-uvx orcestra-downloader --help
+pixi exec orcestra-downloader --help                                                               
 ```
 
 <details>
-<summary>:eyes: or without globally installing</summary>
+<summary>Output</summary>
+
+![pixi-exec-help](assets/pixi-exec-help.png)
+
+</details>
+</table>
+
+#### [uvx](https://docs.astral.sh/uv/guides/tools/#running-tools) **via [pypi](https://pypi.org/project/orcestra-downloader)**
+
+<table>
+<tr>
+<td>
 
 ```console
-pixi exec --spec uv uvx orcestra-downloader --help 
+uvx orcestra-downloader --help                                                                     
 ```
+
+<details>
+<summary>Output</summary>
+
+![uvx-help](assets/uvx-help.png)
+
 </details>
+</td>
+</tr>
+</table>
 
 ### 2. Install into `pixi` project
 
-If you are using [pixi](https://pixi.sh), you can install `orcestra-downloader` into your project.
+If you wish to use `orcestra-downloader` in a [pixi](https://pixi.sh) project,
+you can install `orcestra-downloader` into your project.
+
+**conda-forge**:
 
 ```console
-pixi add --pypi orcestra-downloader
+pixi add orcestra-downloader         # from conda-forge
+
+pixi add --pypi orcestra-downloader  # from pypi
 ```
 
 ### 3. Install with `pip`
@@ -66,12 +90,6 @@ To install the package, use `pip`:
 
 ```console
 pip install orcestra-downloader
-```
-
-or 
-
-```console
-python -m pip install orcestra-downloader
 ```
 
 ## Usage
@@ -180,7 +198,7 @@ orcestra-downloader pharmacosets table GDSC_2020(v2-8.2)
 <tr>
 <td>
 
-:bulb: `orcestra-downloader` uses a cache to store downloaded data.
+:bulb: `orcestra-downloader` uses a cache to store dataset metadata from the Orcestra API.
 This should be located at `~/.cache/orcestra-downloader`.
 
 </td>
@@ -246,7 +264,7 @@ orcestra-downloader icbsets download-all --overwrite
 <tr>
 <td>
 
-```
+```console
 Options:
   -r, --refresh  Fetch all datasets and hydrate the cache.
   -h, --help     Show this message and exit.
@@ -262,14 +280,16 @@ Options:
 <summary>:keyboard: Dataset-specific command options</summary>
 
 For the `list` command:
-```
+
+```console
 Options:
   --force      Force fetch new data.
   --no-pretty  Disable pretty printing.
 ```
 
 For the `table` command:
-```
+
+```console
 Arguments:
   [NAME OF DATASET]  Optional dataset name for detailed information.
 
@@ -278,7 +298,8 @@ Options:
 ```
 
 For the `download` command:
-```
+
+```console
 Arguments:
   [ORCESTRA DATASET NAME]  Required dataset name(s) to download.
 
@@ -289,7 +310,8 @@ Options:
 ```
 
 For the `download-all` command:
-```
+
+```console
 Options:
   -o, --overwrite          Overwrite existing files if they exist.
   -d, --directory PATH     Directory to save the files to.
