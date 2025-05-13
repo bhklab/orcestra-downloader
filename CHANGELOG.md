@@ -1,6 +1,40 @@
 # CHANGELOG
 
 
+## v0.15.0 (2025-05-13)
+
+### Chores
+
+- Format
+  ([`82ff712`](https://github.com/bhklab/orcestra-downloader/commit/82ff7128b5f70e7013940641fbe41e157e5a7014))
+
+- Format
+  ([`8af79d4`](https://github.com/bhklab/orcestra-downloader/commit/8af79d4e4f0257f7c26c418ca75fd5da4c6d7e4d))
+
+### Code Style
+
+- Standardize string quotes and improve code formatting
+  ([`0609141`](https://github.com/bhklab/orcestra-downloader/commit/06091416f4d19e0573bf5781770d7f1aa42c239d))
+
+### Documentation
+
+- Enhance README with CLI usage instructions and add help output images
+  ([`019f573`](https://github.com/bhklab/orcestra-downloader/commit/019f573b33ffdf680c8c0ab07c8e1b2ffc64a717))
+
+### Features
+
+- Redirect to github
+  ([`8ae2700`](https://github.com/bhklab/orcestra-downloader/commit/8ae27009300e66208f7c1154e51c2439b9408e0b))
+
+### Refactoring
+
+- Remove unused 'force' parameter from download_dataset method
+  ([`f6f85d6`](https://github.com/bhklab/orcestra-downloader/commit/f6f85d6a7fd0998477677f477395f87ab2382794))
+
+- Update version retrieval to use importlib.metadata
+  ([`a72dcd9`](https://github.com/bhklab/orcestra-downloader/commit/a72dcd9c080d9076d9d8deca234d563d1db1730f))
+
+
 ## v0.14.0 (2025-05-12)
 
 ### Documentation
