@@ -328,7 +328,6 @@ class UnifiedDataManager:
 		manager_name: str,
 		directory: Path,
 		overwrite: bool = False,
-		force: bool = False,
 		timeout_seconds: int = 3600,
 	) -> List[Path]:
 		"""Download all datasets for a specific manager."""
