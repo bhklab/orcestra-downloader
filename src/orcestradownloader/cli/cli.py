@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import List
 
-import rich_click as click
+import click
 from click import Context, Group, HelpFormatter, MultiCommand
 
 from orcestradownloader.dataset_config import DATASET_CONFIG
@@ -14,6 +14,7 @@ from orcestradownloader.managers import (
     DatasetManager,
     UnifiedDataManager,
 )
+from orcestradownloader import __version__ as VERSION
 
 DEFAULT_DATA_DIR = Path.cwd() / "rawdata" / "orcestradata"
 
@@ -261,6 +262,11 @@ https://github.com/bhklab/orcestra-downloader
 )
 @click.help_option("-h", "--help", help="Show this message and exit.")
 @set_log_verbosity()
+@click.version_option(
+    version=VERSION,
+    package_name="orcestra-downloader",
+    message="%(package)s:%(version)s",
+)
 @click.pass_context
 def cli(ctx, refresh: bool = False, verbose: int = 0, quiet: bool = False):
     """

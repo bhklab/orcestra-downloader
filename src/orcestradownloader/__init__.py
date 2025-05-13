@@ -1,8 +1,6 @@
 """This is a docstring for the public package."""
+from importlib.metadata import version
 
-version = '0.1.0'
-
-__version__ = version
-
+__version__ = version("orcestra-downloader")
 
 __all__ = ['main']
