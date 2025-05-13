@@ -22,6 +22,22 @@ Simplified access to download data from orcestra.ca
 
 </div>
 
+## Table of Contents
+
+- [Installation](#installation)
+  - [1. Recommended CLI access](#1-recommended-cli-access)
+  - [2. Install into `pixi` project](#2-install-into-pixi-project)
+  - [3. Install with `pip`](#3-install-with-pip)
+- [Usage](#usage)
+  - [Available Dataset Types](#available-dataset-types)
+  - [Basic Commands](#basic-commands)
+  - [Examples](#examples)
+  - [Refreshing Cache](#refreshing-cache)
+  - [Downloading Datasets](#downloading-datasets)
+  - [Command Reference](#command-reference)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+
 ## Installation
 
 ### 1. Recommended CLI access
