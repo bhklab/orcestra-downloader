@@ -305,6 +305,9 @@ def cli(ctx, refresh: bool = False, verbose: int = 0, quiet: bool = False):
 
             orcestra [dataset_type] [subcommand] --help
 
+    Check the Project's GitHub page for more information:
+    https://github.com/bhklab/orcestra-downloader
+
     """
     ctx.ensure_object(dict)
 
