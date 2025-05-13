@@ -108,7 +108,13 @@ class DatasetManager(Generic[T]):
 	def print(self, title: str, row_generator: Callable) -> None:
 		"""Print datasets in a formatted table."""
 		printer = TablePrinter(
-			title, headers=['Orcestra Dataset Name', 'Original Dataset Name', 'Date Created', 'Datatypes']
+			title,
+			headers=[
+				'Orcestra Dataset Name',
+				'Original Dataset Name',
+				'Date Created',
+				'Datatypes',
+			],
 		)
 		printer.print_table(self.datasets, row_generator)
 
@@ -365,7 +371,9 @@ class UnifiedDataManager:
 						progress,
 						timeout_seconds=timeout_seconds,
 					)
-					for download_link, file_path in zip(download_links, file_paths, strict=True)
+					for download_link, file_path in zip(
+						download_links, file_paths, strict=True
+					)
 				]
 			)
 
